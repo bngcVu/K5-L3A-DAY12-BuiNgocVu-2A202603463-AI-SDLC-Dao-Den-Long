@@ -53,7 +53,7 @@ Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy), **CHƯA 
 | README: mô tả, ảnh, yêu cầu hệ thống, cài đặt, điều khiển, test, headless, bench, soak | [README.md](../README.md) | ĐẠT |
 | CHANGELOG có mục cả 4 phase | [CHANGELOG.md](../CHANGELOG.md) | ĐẠT |
 | CREDITS, LICENSE | [CREDITS.md](../CREDITS.md), [LICENSE](../LICENSE) (MIT, tác giả có thể đổi) | ĐẠT |
-| Release `v1.0.0` có bản chạy được | Docker (`Dockerfile`) + web tĩnh (`npm run build:web` → `dist/web`) + hướng dẫn trong [release/RELEASE.md](../release/RELEASE.md) | **CHƯA TẠO** (cần tài khoản GitHub; `gh` chưa cài ở máy dev) |
+| Release `v1.0.0` có bản chạy được | Docker (`Dockerfile`) + web tĩnh (`npm run build:web` → `dist/web`) + hướng dẫn trong [release/RELEASE.md](../release/RELEASE.md) | ĐẠT: Release `v1.0.0` (tag `v1.0.0` = commit của `phase-4`) kèm `demo.mp4` và `dao-den-long-web-v1.0.0.zip`; bản Docker chưa dựng thử |
 
 ## 6. Contract v1.3 · 7. Retro & demo
 
@@ -61,7 +61,7 @@ Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy), **CHƯA 
 |---|---|---|
 | `contract_version: "1.3"`, thêm `bench_cmd`, `soak_cmd`; v1.0–v1.2 giữ nguyên | U: "contract v1.3…"; `check.sh` 46 scenario cũ vẫn đạt | ĐẠT |
 | Retro 1–2 trang | [retro/retro.md](../retro/retro.md) | ĐẠT (số token là ước lượng) |
-| Video `.mp4` < 5 phút | kịch bản gợi ý ở release/RELEASE.md | **CHƯA QUAY** |
+| Video `.mp4` < 5 phút | kịch bản gợi ý ở release/RELEASE.md | ĐẠT: 3 phút 54, đính vào Release; nội dung video do tác giả kiểm |
 
 ---
 

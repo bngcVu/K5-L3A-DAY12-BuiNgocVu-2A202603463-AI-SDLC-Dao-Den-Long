@@ -2,7 +2,7 @@
 
 Game 3D góc nhìn thứ ba: **Mây**, người giữ đèn nhỏ tuổi, gom đom đóm để thắp và **giữ sáng** các Đèn Lồng Lớn tới bình minh qua **3 Đêm** (Đảo Bến, Đảo Cau, Đảo Chuông), tránh **Bóng Mực** hút dầu và **Gió Lạc** cướp đom đóm. Logic tất định 60 tick/s ở `src/sim/` (chạy được không cần đồ họa), render bằng Three.js ở `web/`.
 
-> **Video demo:** _(đặt link sau khi quay — xem [release/RELEASE.md](release/RELEASE.md))_
+> **Video demo (3 phút 54):** [demo.mp4](https://github.com/bngcVu/K5-L3A-DAY12-BuiNgocVu-2A202603463-AI-SDLC-Dao-Den-Long/releases/download/v1.0.0/demo.mp4) · **Bản phát hành:** [v1.0.0](https://github.com/bngcVu/K5-L3A-DAY12-BuiNgocVu-2A202603463-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0) (có kèm bản web tĩnh `dao-den-long-web-v1.0.0.zip`)
 
 | Đêm 1 — Đảo Bến, đèn yếu bị hút dầu | Đêm 3 — Đảo Chuông | Cảnh benchmark (200 Bóng Mực) |
 |---|---|---|
@@ -84,7 +84,7 @@ Tài liệu: tiêu chí nghiệm thu từng phase [docs/spec-phase-2.md](docs/sp
 ## Hạn chế đã biết (trung thực)
 
 - **Chưa kiểm bằng tay trong trình duyệt thật:** menu → giới thiệu → kết quả → Bình Minh, nhập tên bảng xếp hạng, đổi phím, giảm chuyển động, chữ lớn, mũi tên chỉ hướng Bóng Mực, âm thanh. Logic đằng sau các tính năng này có unit test (bảng xếp hạng, thống kê bench, soak) nhưng giao diện chỉ được xem qua ảnh chụp headless.
-- **GitHub Release `v1.0.0` và video demo chưa được tạo** (cần tài khoản GitHub và quay màn hình) — hướng dẫn từng bước ở [release/RELEASE.md](release/RELEASE.md). Docker image chưa được dựng thử trên máy dev.
+- Docker image chưa được dựng thử trên máy dev. Release `v1.0.0` và video demo đã được tạo; cách tạo lại: [release/RELEASE.md](release/RELEASE.md).
 - Chưa chạy thử trên macOS/Linux thật (phát triển trên Windows); GitHub Actions chạy `check.sh` + soak trên Ubuntu.
 - Ticket Phase 2 không nêu điểm xuất phát Đêm 3 nên chọn (0,0,−12); các mơ hồ khác ở `spec/*.md` và `docs/spec-phase-2.md`.
 - Bóng Mực đuổi theo đường thẳng, không tìm đường (có thể kẹt dưới vách tầng ở Đêm 3). Tên bảng xếp hạng chưa hỗ trợ tiếng Việt có dấu.
