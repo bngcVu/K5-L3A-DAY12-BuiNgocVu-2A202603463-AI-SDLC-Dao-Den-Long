@@ -1,0 +1,17 @@
+{
+  "requirement": "P1: nạp ánh sáng thắp đèn",
+  "desc": "Mang 10 đom đóm, đứng cạnh L1, bấm interact ở tick 1 → deposit + lantern_lit ở tick 2. Giả định lantern_cost=10, carry_capacity>=10 (số chuẩn Phase 2) — sửa theo tuning của bạn",
+  "seed": 1, "night": 1, "ticks": 10, "snapshot_every": 10,
+  "expect": {
+    "events": [
+      { "name": "deposit", "tick": 2, "data": { "lantern_id": "L1", "amount": 10, "deposited": 10 } },
+      { "name": "lantern_lit", "tick": 2, "data": { "lantern_id": "L1" } }
+    ],
+    "no_events": ["game_over"],
+    "snapshots": [
+      { "tick": 0, "path": "lanterns[id=L1].lit", "equals": false },
+      { "tick": 10, "path": "lanterns[id=L1].lit", "equals": true },
+      { "tick": 10, "path": "player.carried", "equals": 0 }
+    ]
+  }
+}

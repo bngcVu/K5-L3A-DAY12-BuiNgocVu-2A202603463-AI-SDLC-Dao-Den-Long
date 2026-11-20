@@ -1,0 +1,9 @@
+{
+  "requirement": "P1: Bóng Mực sợ đèn (safe_radius 4 quanh đèn)",
+  "desc": "Người chơi đứng tại L1 (0,0,10); shade ở (20,1,10) đuổi 20 s: không bao giờ vào trong 4 m của đèn → khoảng cách tới đèn ≥ 4 (snapshot tick 1200) và không player_hit",
+  "seed": 1, "night": 1, "ticks": 1200, "snapshot_every": 10,
+  "expect": {
+    "no_events": ["player_hit"],
+    "snapshots": [{ "tick": 1200, "path": "shades[id=S1].pos", "equals": [4, 1, 10], "tol": 0.2 }]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "requirement": "P1: tỏa sáng xua Bóng Mực",
+  "desc": "Mang 5 đom đóm, shade S1 cách 4 m (trong pulse_radius 6). pulse ở tick 1 → event tick 2: stunned_ids [S1], carried 5-2=3, score +20 (per_stun), shade state stunned và bị đẩy ra (4 − 3.5/60 do chase 1 tick ở bước 0) + 3 = 6.942 m",
+  "seed": 1, "night": 1, "ticks": 20, "snapshot_every": 10,
+  "expect": {
+    "events": [{ "name": "pulse", "tick": 2, "data": { "stunned_ids": ["S1"] }, "count": 1 }],
+    "no_events": ["player_hit"],
+    "snapshots": [
+      { "tick": 10, "path": "shades[id=S1].state", "equals": "stunned" },
+      { "tick": 10, "path": "shades[id=S1].pos", "equals": [0, 1, -6.942], "tol": 0.01 },
+      { "tick": 10, "path": "player.carried", "equals": 3 },
+      { "tick": 10, "path": "score", "equals": 20 }
+    ]
+  }
+}

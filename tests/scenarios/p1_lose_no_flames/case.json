@@ -1,0 +1,10 @@
+{
+  "requirement": "P1: mất hết máu thì thua",
+  "desc": "flames=1, shade chạm → flames 0 → game_over lost/no_flames, end state lost",
+  "seed": 1, "night": 1, "ticks": 600, "snapshot_every": 10,
+  "expect": {
+    "events": [{ "name": "player_hit", "data": { "by": "shade", "flames": 0 }, "count": 1 },
+               { "name": "game_over", "data": { "result": "lost", "reason": "no_flames" }, "count": 1 }],
+    "end": { "state": "lost" }
+  }
+}

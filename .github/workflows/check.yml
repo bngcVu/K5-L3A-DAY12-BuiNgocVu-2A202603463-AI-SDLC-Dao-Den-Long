@@ -1,0 +1,19 @@
+name: check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Thêm bước setup ngôn ngữ của bạn nếu cần, ví dụ:
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: 20 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Build (build_cmd trong game.contract.json)
+        run: bash -c "$(python3 -c 'import json;print(json.load(open("game.contract.json"))["build_cmd"])')"
+      - name: Unit test + scenario + tất định
+        run: ./scripts/check.sh --label ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: evidence-ci, path: evidence/ci/ }

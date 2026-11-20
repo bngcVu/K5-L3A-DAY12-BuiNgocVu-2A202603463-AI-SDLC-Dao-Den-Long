@@ -1,0 +1,9 @@
+{
+  "requirement": "Contract E: định dạng + tất định khi spawn ngẫu nhiên",
+  "desc": "Chạy màn mặc định 20 giây với seed 42, không input: output đúng định dạng và 2 lần chạy giống hệt",
+  "seed": 42,
+  "night": 1,
+  "ticks": 1200,
+  "snapshot_every": 10,
+  "expect": {}
+}

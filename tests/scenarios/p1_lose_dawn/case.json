@@ -1,0 +1,9 @@
+{
+  "requirement": "P1: hết đêm mà chưa thắp hết đèn thì thua",
+  "desc": "time_left_s=2 → sau 120 bước: game_over lost/dawn ở tick 120",
+  "seed": 1, "night": 1, "ticks": 500, "snapshot_every": 10,
+  "expect": {
+    "events": [{ "name": "game_over", "tick": 120, "data": { "result": "lost", "reason": "dawn" } }],
+    "end": { "state": "lost", "ticks": 120 }
+  }
+}

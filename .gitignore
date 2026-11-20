@@ -1,2 +1,10 @@
-docs/
 skills/
+node_modules/
+.env
+.env.*
+!.env.example
+.claude/.stop-gate-count
+.claude/settings.local.json
+evidence/latest/
+evidence/ci/
+*.run2.jsonl

@@ -1,0 +1,9 @@
+{
+  "requirement": "P1: thắp hết đèn thì thắng, có điểm",
+  "desc": "L2..L5 đã lit; mang 10, deposit vào L1 ở tick 1 → tick 2: deposit, lantern_lit, game_over won/all_lit. Điểm = 100 (lantern) + floor(5998/60=99.97)*1 = 99 (time_left 100 s − 2 bước) + 3*50 (flames) = 349",
+  "seed": 1, "night": 1, "ticks": 50, "snapshot_every": 10,
+  "expect": {
+    "events": [{ "name": "lantern_lit", "tick": 2 }, { "name": "game_over", "tick": 2, "data": { "result": "won", "reason": "all_lit" } }],
+    "end": { "state": "won", "score": 349, "ticks": 2 }
+  }
+}

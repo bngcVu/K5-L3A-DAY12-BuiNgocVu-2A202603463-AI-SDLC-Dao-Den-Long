@@ -1,0 +1,10 @@
+{
+  "requirement": "P1: nhặt đom đóm",
+  "desc": "Đi thẳng +Z tới đom đóm ở (0,0,5) thì nhặt được, carried = 1",
+  "seed": 1, "night": 1, "ticks": 120, "snapshot_every": 10,
+  "expect": {
+    "events": [{ "name": "mote_picked", "data": { "carried": 1 }, "count": 1 }],
+    "no_events": ["player_hit"],
+    "snapshots": [{ "tick": 120, "path": "player.carried", "equals": 1 }]
+  }
+}

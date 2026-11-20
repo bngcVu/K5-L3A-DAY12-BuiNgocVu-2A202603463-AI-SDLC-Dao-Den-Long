@@ -1,0 +1,14 @@
+{
+  "name": "dao-den-long",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Đảo Đèn Lồng - game 3D (Three.js) với sim tất định chạy headless",
+  "scripts": {
+    "start": "node server.js",
+    "headless": "node src/headless.js",
+    "test": "node --test tests/unit/*.test.js",
+    "check": "bash scripts/check.sh"
+  },
+  "dependencies": { "three": "0.160.0" }
+}

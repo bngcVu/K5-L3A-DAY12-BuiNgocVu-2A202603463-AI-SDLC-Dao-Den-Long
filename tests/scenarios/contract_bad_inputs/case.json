@@ -1,0 +1,5 @@
+{
+  "requirement": "Contract B/C: inputs sai định dạng → exit 2",
+  "desc": "tick của frame giảm (10 rồi 5) phải bị từ chối với mã thoát 2 và thông báo ở stderr",
+  "seed": 1, "night": 1, "ticks": 20, "exit_code": 2
+}
