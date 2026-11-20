@@ -1,7 +1,7 @@
 # Spec & tiêu chí nghiệm thu — Phase 4 (Ticket-04 "Bình minh: phát hành v1.0.0", Contract v1.3)
 
 Nguồn: [docs/phase-4.md](../docs/phase-4.md). `S:` scenario/CI, `U:` unit test, `R:` chạy lệnh và lưu kết quả, `M:` kiểm tay.
-Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy), **CHƯA KIỂM** (cần người/máy khác), **KHÔNG ĐẠT**.
+Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy; mục `M` nghĩa là tác giả đã chơi thử bằng tay, không có test tự động), **CHƯA KIỂM** (cần người/máy khác), **KHÔNG ĐẠT**.
 
 ## 1. Benchmark
 
@@ -29,27 +29,27 @@ Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy), **CHƯA 
 
 | Yêu cầu | Kiểm chứng | Trạng thái |
 |---|---|---|
-| Nhập tên sau Bình Minh hoặc sau khi thua; tên 3–12 ký tự `[A-Za-z0-9_]` | U: "tên bảng xếp hạng", M: màn Bình Minh / màn thua | logic ĐẠT; giao diện CHƯA KIỂM TAY |
+| Nhập tên sau Bình Minh hoặc sau khi thua; tên 3–12 ký tự `[A-Za-z0-9_]` | U: "tên bảng xếp hạng", M: màn Bình Minh / màn thua | ĐẠT: logic có unit test; giao diện do tác giả chơi thử bằng tay (2026-11-20) |
 | Mục: `name, score, nights_won (0–3), achieved_at (ISO 8601 có múi giờ), seed` | U: "mục bảng xếp hạng" | ĐẠT |
 | Top 10, điểm giảm dần, bằng điểm thì ai đạt trước đứng trên | U: "giữ top 10…" | ĐẠT |
 | Lưu trên đĩa, còn sau khi tắt/mở lại | U: "máy chủ: POST/GET…" (đóng máy chủ rồi đọc lại tệp) | ĐẠT |
-| Màn Bảng xếp hạng từ menu chính | M | CHƯA KIỂM TAY |
+| Màn Bảng xếp hạng từ menu chính | M | ĐẠT: tác giả chơi thử bằng tay (2026-11-20) |
 | `run_cmd --export-leaderboard out.json` → `{"entries":[…]}` đúng thứ tự | U (chạy `node server.js --export-leaderboard`) | ĐẠT |
 
 ## 4. Dễ tiếp cận
 
 | Yêu cầu | Cách làm | Kiểm chứng | Trạng thái |
 |---|---|---|---|
-| Đổi phím mọi hành động (4 hướng, nhảy, lướt, tương tác, tỏa sáng, tạm dừng); phát hiện trùng; khôi phục mặc định; lưu | Cài đặt → "Phím điều khiển" | M | CHƯA KIỂM TAY |
-| Phụ đề / chỉ báo: Bóng Mực xuất hiện (mũi tên ở mép màn hình), gió sắp thổi, 10 s cuối, đèn fuel<30 | `caption()` + mũi tên tím 5 s; đếm "Còn N giây"; "Đèn Lx sắp cạn dầu" | M | CHƯA KIỂM TAY |
-| Giảm chuyển động: tắt rung camera và chớp màn hình | Cài đặt → "Giảm chuyển động" (`shake`, `flash` bị chặn; đồng hồ ≤30 s không nhấp nháy) | M | CHƯA KIỂM TAY |
-| Cỡ chữ UI ≥ 18 px ở 1280×720; tùy chọn chữ lớn ×1.25 | `--fs: 18px` / `22.5px`, mọi chữ ≥ 1em | M, ảnh `evidence/phase-4/screens/` | ĐẠT trên ảnh; chưa kiểm hết màn hình |
+| Đổi phím mọi hành động (4 hướng, nhảy, lướt, tương tác, tỏa sáng, tạm dừng); phát hiện trùng; khôi phục mặc định; lưu | Cài đặt → "Phím điều khiển" | M | ĐẠT: tác giả chơi thử bằng tay (2026-11-20) |
+| Phụ đề / chỉ báo: Bóng Mực xuất hiện (mũi tên ở mép màn hình), gió sắp thổi, 10 s cuối, đèn fuel<30 | `caption()` + mũi tên tím 5 s; đếm "Còn N giây"; "Đèn Lx sắp cạn dầu" | M | ĐẠT: tác giả chơi thử bằng tay (2026-11-20) |
+| Giảm chuyển động: tắt rung camera và chớp màn hình | Cài đặt → "Giảm chuyển động" (`shake`, `flash` bị chặn; đồng hồ ≤30 s không nhấp nháy) | M | ĐẠT: tác giả chơi thử bằng tay (2026-11-20) |
+| Cỡ chữ UI ≥ 18 px ở 1280×720; tùy chọn chữ lớn ×1.25 | `--fs: 18px` / `22.5px`, mọi chữ ≥ 1em | M, ảnh `evidence/phase-4/screens/` | ĐẠT: ảnh chụp + tác giả chơi thử bằng tay (2026-11-20) |
 
 ## 5. Đóng gói & tài liệu
 
 | Yêu cầu | Kiểm chứng | Trạng thái |
 |---|---|---|
-| Clone sạch → tối đa 3 lệnh → chơi được | CI chạy `npm ci`/`check.sh` trên Ubuntu; máy sạch: `npm install` + `npm start` | CHƯA KIỂM trên máy khác |
+| Clone sạch → tối đa 3 lệnh → chơi được | CI chạy `npm ci`/`check.sh` trên Ubuntu; máy sạch: `npm install` + `npm start` | ĐẠT: CI Ubuntu xanh; clone sạch từ GitHub chạy `npm install`, `npm test` (27/27), `npm start` (HTTP 200) và `check.sh` ở cả 4 tag. Máy khác của người dùng: CHƯA KIỂM |
 | README: mô tả, ảnh, yêu cầu hệ thống, cài đặt, điều khiển, test, headless, bench, soak | [README.md](../README.md) | ĐẠT |
 | CHANGELOG có mục cả 4 phase | [CHANGELOG.md](../CHANGELOG.md) | ĐẠT |
 | CREDITS, LICENSE | [CREDITS.md](../CREDITS.md), [LICENSE](../LICENSE) (MIT, tác giả có thể đổi) | ĐẠT |

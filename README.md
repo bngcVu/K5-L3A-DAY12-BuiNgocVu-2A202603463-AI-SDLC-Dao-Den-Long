@@ -83,8 +83,8 @@ Tài liệu: tiêu chí nghiệm thu từng phase [docs/spec-phase-2.md](docs/sp
 
 ## Hạn chế đã biết (trung thực)
 
-- **Chưa kiểm bằng tay trong trình duyệt thật:** menu → giới thiệu → kết quả → Bình Minh, nhập tên bảng xếp hạng, đổi phím, giảm chuyển động, chữ lớn, mũi tên chỉ hướng Bóng Mực, âm thanh. Logic đằng sau các tính năng này có unit test (bảng xếp hạng, thống kê bench, soak) nhưng giao diện chỉ được xem qua ảnh chụp headless.
+- **Giao diện không có test tự động.** Menu → giới thiệu → kết quả → Bình Minh, nhập tên bảng xếp hạng, đổi phím, giảm chuyển động, chữ lớn, mũi tên chỉ hướng Bóng Mực và âm thanh đã được tác giả chơi thử bằng tay và chạy đúng; logic phía sau (bảng xếp hạng, thống kê bench, soak) có unit test. Không có test giao diện tự động (ví dụ Playwright), nên hồi quy giao diện chỉ phát hiện được khi chơi lại.
 - Docker image chưa được dựng thử trên máy dev. Release `v1.0.0` và video demo đã được tạo; cách tạo lại: [release/RELEASE.md](release/RELEASE.md).
-- Chưa chạy thử trên macOS/Linux thật (phát triển trên Windows); GitHub Actions chạy `check.sh` + soak trên Ubuntu.
+- Phát triển trên Windows. Linux được kiểm bằng GitHub Actions (Ubuntu): `check.sh` + soak xanh. macOS chưa chạy thử.
 - Ticket Phase 2 không nêu điểm xuất phát Đêm 3 nên chọn (0,0,−12); các mơ hồ khác ở `spec/*.md` và `docs/spec-phase-2.md`.
 - Bóng Mực đuổi theo đường thẳng, không tìm đường (có thể kẹt dưới vách tầng ở Đêm 3). Tên bảng xếp hạng chưa hỗ trợ tiếng Việt có dấu.

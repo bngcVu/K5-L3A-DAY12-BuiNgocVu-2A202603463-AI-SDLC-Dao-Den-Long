@@ -9,7 +9,7 @@ Tác giả: Bui Ngoc Vu · Công cụ: Claude Code (Sonnet 5.5) trong VS Code ·
 | 1 — PRD-0 | Đêm 1, headless Contract v1.0 | 10 scenario + 8 unit test, tất định | — | Harness mẫu chỉ chạy trên POSIX → vá runner cho Windows |
 | 2 — "Ba hòn đảo" | Số chuẩn, 3 bản đồ, lướt, Gió Lạc, bùa, rơi, tạm dừng | 32 scenario + 14 unit | Có: 5 test Phase 1 đổi số (ghi lý do) | Mơ hồ của ticket (điểm xuất phát Đêm 3, quy ước góc) phải đoán và ghi |
 | 3 — "Đèn cạn dầu" | Thay luật cốt lõi (dầu, thắng ở bình minh) | 46 scenario + 19 unit | Có: xóa 2 test luật thắng cũ, sửa 5 test | ADR + CHANGELOG trước khi sửa test; mở rộng runner cho v1.2 |
-| 4 — "Bình minh" | Bench, soak, bảng xếp hạng, tiếp cận, đóng gói | 46 scenario + 27 unit; bench 282 FPS, soak 0 crash | Không (headless không đổi) | Nhiều phần giao diện **chưa kiểm tay**; Release/video chưa làm |
+| 4 — "Bình minh" | Bench, soak, bảng xếp hạng, tiếp cận, đóng gói | 46 scenario + 27 unit; bench 282 FPS, soak 0 crash | Không (headless không đổi) | Giao diện chỉ kiểm tay (không test tự động); Release và video đã tạo |
 
 ## 2. Điều gì hiệu quả
 
@@ -22,7 +22,7 @@ Tác giả: Bui Ngoc Vu · Công cụ: Claude Code (Sonnet 5.5) trong VS Code ·
 
 - Heredoc bash dài trên Windows hỏng quoting **hai lần** → chuyển sang công cụ Write rồi chạy file. Lẽ ra ghi vào AGENTS.md ngay lần đầu.
 - Mỗi phase tôi viết lại phần client nhiều hơn dự kiến; ở Phase 4 phải viết lại cả `main.js` vì thay đổi rải khắp file.
-- Kiểm tra giao diện chỉ qua ảnh chụp Chrome headless: không thay được chơi thật. Đây là khoảng trống lớn nhất của bài (menu, nhập tên, đổi phím, âm thanh chưa kiểm tay).
+- Giao diện không có test tự động; tôi kiểm bằng ảnh chụp Chrome headless rồi chơi thử bằng tay ở cuối. Ảnh chụp không thay được chơi thật, và chơi tay không bắt được hồi quy về sau: đây là khoảng trống còn lại của bài (nên có Playwright cho luồng menu → nhập tên → bảng xếp hạng).
 
 ## 4. Những lần AI sai và cách phát hiện
 
