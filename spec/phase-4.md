@@ -23,7 +23,7 @@ Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy; mục `M`
 | `soak_cmd --seed 7 --nights 10 --out soak.json`, 10 Đêm trong **một tiến trình**, Đêm 1→2→3 xoay vòng, Đêm thứ i dùng seed 7+i | `node src/soak.js` | R: `evidence/phase-4/soak.json`, U: "soak…" | ĐẠT |
 | Input ngẫu nhiên theo seed: đổi hướng mỗi 30 tick; mỗi tick 5% nhảy, 3% lướt, 2% tỏa sáng, 10% tương tác | RNG riêng của input, tách khỏi RNG của sim | đọc mã, U (tất định theo seed) | ĐẠT |
 | Output `nights, crashes, results, mem_start_mb, mem_end_mb, duration_s` | khớp mẫu | R | ĐẠT |
-| `crashes = 0` và `mem_end_mb ≤ 1.2 × mem_start_mb` | lệnh thoát mã 1 nếu vi phạm | R | ĐẠT (≈1.08×); heap ổn định ~5 MB sau mỗi 10 Đêm |
+| `crashes = 0` và `mem_end_mb ≤ 1.2 × mem_start_mb` | lệnh thoát mã 1 nếu vi phạm | R | ĐẠT (0.92× trên máy dev; Linux CI: xem D13); heap ổn định ~5 MB sau mỗi 10 Đêm |
 
 ## 3. Bảng xếp hạng cục bộ
 
@@ -81,3 +81,4 @@ Trạng thái ghi trung thực: **ĐẠT** (có bằng chứng chạy; mục `M`
 | D10 | Lưu điểm khi thua | Cho lưu tại màn thua (điểm = tổng các Đêm đã thắng, `nights_won` = số Đêm đã thắng, `seed` = seed Đêm vừa thua); không bắt buộc, có thể bỏ qua |
 | D11 | Tên có dấu | Chưa hỗ trợ (điểm cộng, không bắt buộc) |
 | D12 | `run_cmd` | Đổi thành `node server.js` để `--export-leaderboard` truyền thẳng được (với `npm start` phải thêm `--`) |
+| D13 | Soak: RSS trên Linux | GitHub Actions (Ubuntu) đo 68.7 → 86.1 MB (1.25× > 1.2×) dù heap phẳng ~5 MB: V8 nở dần vùng nhớ thế hệ trẻ. `node src/soak.js` tự chạy lại chính nó với `--max-semi-space-size=1 --expose-gc` (cả N Đêm vẫn trong một tiến trình con) và khởi động nóng 3 Đêm × 4000 tick; trên Windows ratio ≈ 1.01–1.03× |

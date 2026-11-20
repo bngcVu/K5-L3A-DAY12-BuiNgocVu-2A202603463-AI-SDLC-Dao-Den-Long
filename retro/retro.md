@@ -52,7 +52,7 @@ Công cụ không cung cấp số token tổng; con số dưới đây là ướ
 
 ## 6b. Số liệu cuối
 
-46 scenario headless (mỗi cái chạy 2 lần), 27 unit test, 15 commit trải 4 phase, bench 282 FPS / 74.6 FPS 1%-low (iGPU), soak 10 Đêm 0 crash RSS ×1.07, headless một Đêm ≈ 0.3 s.
+46 scenario headless (mỗi cái chạy 2 lần), 27 unit test, 15 commit trải 4 phase, bench 282 FPS / 74.6 FPS 1%-low (iGPU), soak 10 Đêm 0 crash RSS ×0.92 sau khi sửa, headless một Đêm ≈ 0.3 s.
 
 ## 7. Nếu làm lại
 

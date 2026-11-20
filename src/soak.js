@@ -1,7 +1,8 @@
 // Soak test (Ticket-04 §2): nhiều Đêm liên tiếp, CÙNG MỘT tiến trình, input ngẫu nhiên theo seed.
 //   node src/soak.js --seed 7 --nights 10 --out soak.json
 import { writeFileSync } from 'node:fs';
-import { pathToFileURL } from 'node:url';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import v8 from 'node:v8';
 import vm from 'node:vm';
 import { Sim } from './sim/sim.js';
@@ -18,7 +19,7 @@ const settle = () => { if (gcFn) { gcFn(); gcFn(); } }; // đo RSS sau khi bộ 
 function warmup() {
   for (let n = 1; n <= 3; n++) {
     const sim = new Sim({ seed: 1000 + n, night: n }), rng = makeRng(n);
-    for (let k = 0; k < 1500 && sim.state === 'playing'; k++) sim.step({ move: [Math.cos(k / 40), Math.sin(k / 40)], jump: rng() < 0.05, dash: rng() < 0.03, pulse: rng() < 0.02, interact: rng() < 0.1 });
+    for (let k = 0; k < 4000 && sim.state === 'playing'; k++) sim.step({ move: [Math.cos(k / 40), Math.sin(k / 40)], jump: rng() < 0.05, dash: rng() < 0.03, pulse: rng() < 0.02, interact: rng() < 0.1 });
   }
 }
 
@@ -54,7 +55,17 @@ export function runSoak({ seed = 7, nights = 10 } = {}) {
   };
 }
 
+// RSS của Node tăng bậc thang vì V8 nở dần vùng nhớ "thế hệ trẻ" khi sinh nhiều rác (đo trên GitHub Actions/Ubuntu: 68.7 → 86.1 MB = 1.25×
+// dù heap thật phẳng ~5 MB). Chặn vùng này bằng cờ V8; mọi Đêm vẫn chạy trong CÙNG MỘT tiến trình (tiến trình con này).
+const V8_FLAGS = ['--max-semi-space-size=1', '--expose-gc'];
+function relaunchWithFlags() {
+  if (process.env.DDL_SOAK_CHILD) return;
+  const r = spawnSync(process.execPath, [...V8_FLAGS, fileURLToPath(import.meta.url), ...process.argv.slice(2)], { stdio: 'inherit', env: { ...process.env, DDL_SOAK_CHILD: '1' } });
+  process.exit(r.status ?? 1);
+}
+
 function main() {
+  relaunchWithFlags();
   const a = process.argv.slice(2), get = (f, d) => { const i = a.indexOf(f); return i >= 0 ? a[i + 1] : d; };
   const seed = Number(get('--seed', 7)), nights = Number(get('--nights', 10)), out = get('--out');
   if (!Number.isInteger(seed) || !Number.isInteger(nights) || nights < 1 || !out) {

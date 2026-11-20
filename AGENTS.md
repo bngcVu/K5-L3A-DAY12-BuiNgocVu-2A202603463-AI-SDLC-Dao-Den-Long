@@ -38,3 +38,4 @@ Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có ch�
 - Runner mẫu không biết contract mới: khi `contract_version` tăng, mở rộng `tools/run_scenarios.py` (và ghi `docs/changes.md`) trước khi chạy `check.sh`.
 - Số đo hiệu năng/bộ nhớ: chạy lặp vài lần và đo heap riêng trước khi tin một con số (soak lần đầu RSS lạnh ra 1.15× sát ngưỡng 1.2×; nguyên nhân là JIT chứ không phải rò rỉ).
 - Phần giao diện không có test tự động: ghi "CHƯA KIỂM TAY" trong `spec/phase-N.md` thay vì tuyên bố đạt.
+- Đo bộ nhớ chạy xanh trên Windows chưa chứng minh xanh trên Linux: soak RSS 1.07× ở máy dev nhưng 1.25× trên CI Ubuntu (V8 nở vùng nhớ trẻ). Với phép đo có ngưỡng, **đẩy lên CI và đọc log** trước khi tuyên bố đạt; chặn nguyên nhân bằng cờ V8 thay vì nới ngưỡng.

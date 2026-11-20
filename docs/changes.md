@@ -30,4 +30,5 @@
 | 2026-11-20 | `src/sim/sim.js`: thêm tùy chọn `bench` | Cảnh benchmark phải tắt sinh thêm/sát thương/nhặt/hao dầu/kết thúc Đêm. Mặc định `false` → đầu ra headless không đổi (46 scenario vẫn đạt) |
 | 2026-11-20 | `tests/unit/sim.test.js`: `contract_version` kỳ vọng 1.2 → 1.3 | Phase 4 nâng contract |
 | 2026-11-20 | Không xóa/sửa scenario nào ở Phase 4 | Mọi yêu cầu v1.0–v1.2 giữ nguyên |
-
+| 2026-11-20 | `src/soak.js`: tự chạy lại với `--max-semi-space-size=1 --expose-gc`, khởi động nóng 4000 tick | CI Ubuntu báo soak `mem_end/mem_start` = 1.25× (> 1.2×). Không đổi sim hay ngưỡng; chỉ ổn định phép đo. Chạy lại `evidence/phase-4/soak.json` |
+| 2026-11-20 | `.github/workflows/check.yml`: chạy `bash scripts/check.sh`; `scripts/check.sh`, `.claude/hooks/stop-gate.sh` đặt chế độ 100755 | CI báo exit 126 (file `.sh` tạo trên Windows không có quyền chạy) |

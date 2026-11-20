@@ -67,10 +67,10 @@ Khai báo lệnh trong [game.contract.json](game.contract.json) (v1.3: `build_cm
 | Benchmark: `avg_fps` | **282.1** | ≥ 60 |
 | Benchmark: `p1_low_fps` | **74.6** | ≥ 30 |
 | Benchmark: `frame_ms_p95` / `frames` / `load_ms` | 6.3 ms / 8463 / 1580 ms | `load_ms` ≤ 10000 |
-| Soak 10 Đêm: `crashes` / RSS đầu → cuối | **0** / 42.4 → 45.3 MB (**1.07×**) | 0 / ≤ 1.2× |
+| Soak 10 Đêm: `crashes` / RSS đầu → cuối | **0** / 49.6 → 45.5 MB (**0.92×**; CI Ubuntu từng đo 1.25× trước khi chặn vùng nhớ trẻ, xem bên dưới) | 0 / ≤ 1.2× |
 | Headless một Đêm đầy đủ (≤ 21.600 tick) | ≈ 0.3 s | ≤ 30 s |
 
-Chi tiết: [evidence/phase-4/bench.json](evidence/phase-4/bench.json), [evidence/phase-4/soak.json](evidence/phase-4/soak.json). Đây là số **tự đo trên máy dev**, máy chấm của giảng viên có thể cho số khác. Ghi chú trung thực: (1) `peak_mem_mb` là `null` vì bản web chạy trong Chrome nhiều tiến trình; (2) `vsync_off` là `true` do truyền cờ tắt vsync, trình điều khiển có thể vẫn ép vsync (xem `vsync_note` trong `bench.json`); (3) soak khởi động nóng vài Đêm trước khi đo RSS đầu và gọi GC trước mỗi lần đo (heap thật ổn định ≈ 5 MB), tức là không đo cảnh JIT lạnh.
+Chi tiết: [evidence/phase-4/bench.json](evidence/phase-4/bench.json), [evidence/phase-4/soak.json](evidence/phase-4/soak.json). Đây là số **tự đo trên máy dev**, máy chấm của giảng viên có thể cho số khác. Ghi chú trung thực: (1) `peak_mem_mb` là `null` vì bản web chạy trong Chrome nhiều tiến trình; (2) `vsync_off` là `true` do truyền cờ tắt vsync, trình điều khiển có thể vẫn ép vsync (xem `vsync_note` trong `bench.json`); (3) soak khởi động nóng vài Đêm trước khi đo RSS đầu, gọi GC trước mỗi lần đo và tự chạy lại với `--max-semi-space-size=1` (cả 10 Đêm vẫn trong một tiến trình con) vì RSS trên Linux từng nở 1.25× do V8 mở rộng vùng nhớ trẻ trong khi heap thật phẳng ≈ 5 MB.
 
 Tài liệu: tiêu chí nghiệm thu từng phase [docs/spec-phase-2.md](docs/spec-phase-2.md) · [spec/phase-3.md](spec/phase-3.md) · [spec/phase-4.md](spec/phase-4.md); quyết định thiết kế [adr/0001-den-can-dau-va-luat-thang.md](adr/0001-den-can-dau-va-luat-thang.md); [CHANGELOG.md](CHANGELOG.md); lý do sửa/xóa test [docs/changes.md](docs/changes.md); nhật ký dùng AI [docs/ai-log.md](docs/ai-log.md); retro [retro/retro.md](retro/retro.md); nguồn asset [CREDITS.md](CREDITS.md); giấy phép [LICENSE](LICENSE) (MIT).
 
