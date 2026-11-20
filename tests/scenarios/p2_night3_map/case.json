@@ -1,0 +1,55 @@
+{
+  "requirement": "P2 Đêm 3 Đảo Chuông: 7 đèn theo bản đồ chuẩn, 360 s",
+  "desc": "Snapshot 0: L1 (0,6,6), L2 (18,3,10), L7 (-20,0,-35); time_left 360; night 3; 20 đom đóm lúc đầu",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 3,
+  "snapshot_every": 10,
+  "ticks": 10,
+  "expect": {
+    "snapshots": [
+      {
+        "tick": 0,
+        "path": "night",
+        "equals": 3
+      },
+      {
+        "tick": 0,
+        "path": "time_left_s",
+        "equals": 360
+      },
+      {
+        "tick": 0,
+        "path": "motes_active",
+        "equals": 20
+      },
+      {
+        "tick": 0,
+        "path": "lanterns[id=L1].pos",
+        "equals": [
+          0,
+          6,
+          6
+        ]
+      },
+      {
+        "tick": 0,
+        "path": "lanterns[id=L2].pos",
+        "equals": [
+          18,
+          3,
+          10
+        ]
+      },
+      {
+        "tick": 0,
+        "path": "lanterns[id=L7].pos",
+        "equals": [
+          -20,
+          0,
+          -35
+        ]
+      }
+    ]
+  }
+}

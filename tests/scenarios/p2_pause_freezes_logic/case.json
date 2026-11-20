@@ -1,0 +1,66 @@
+{
+  "requirement": "P2 Tạm dừng: tick vẫn tăng, sim_tick/thời gian đứng yên, snapshot paused",
+  "desc": "Đi +Z 6 m/s; pause ở bước 10 (event tick 11): trước đó 10 bước = 1.0 m. Tạm dừng tới bước 40 (resumed tick 41). Tick 30: paused, sim_tick 10, time_left 300-10/60=299.833, z=1.0. Tick 60: đi tiếp 20 bước → z=3.0, sim_tick 30",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 60,
+  "expect": {
+    "events": [
+      {
+        "name": "paused",
+        "tick": 11,
+        "count": 1
+      },
+      {
+        "name": "resumed",
+        "tick": 41,
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 30,
+        "path": "state",
+        "equals": "paused"
+      },
+      {
+        "tick": 30,
+        "path": "sim_tick",
+        "equals": 10
+      },
+      {
+        "tick": 30,
+        "path": "time_left_s",
+        "equals": 299.833,
+        "tol": 0.001
+      },
+      {
+        "tick": 30,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          1
+        ],
+        "tol": 0.01
+      },
+      {
+        "tick": 60,
+        "path": "sim_tick",
+        "equals": 30
+      },
+      {
+        "tick": 60,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          3
+        ],
+        "tol": 0.01
+      }
+    ]
+  }
+}

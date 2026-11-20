@@ -1,15 +1,52 @@
 {
   "requirement": "P1: tỏa sáng xua Bóng Mực",
-  "desc": "Mang 5 đom đóm, shade S1 cách 4 m (trong pulse_radius 6). pulse ở tick 1 → event tick 2: stunned_ids [S1], carried 5-2=3, score +20 (per_stun), shade state stunned và bị đẩy ra (4 − 3.5/60 do chase 1 tick ở bước 0) + 3 = 6.942 m",
-  "seed": 1, "night": 1, "ticks": 20, "snapshot_every": 10,
+  "desc": "Chuẩn v1.1: mang 5, S1 cách 4 m (3D≈4.005 ≤5). Bước 0 S1 đuổi 4/60 → z=-3.933; pulse tick 2: carried 5-3=2, +5 điểm; bị đẩy 4 m trong 15 tick → z=-7.933 tại tick 20, state stunned",
+  "seed": 1,
+  "night": 1,
+  "ticks": 20,
+  "snapshot_every": 10,
   "expect": {
-    "events": [{ "name": "pulse", "tick": 2, "data": { "stunned_ids": ["S1"] }, "count": 1 }],
-    "no_events": ["player_hit"],
+    "events": [
+      {
+        "name": "pulse",
+        "tick": 2,
+        "data": {
+          "stunned_ids": [
+            "S1"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "player_hit"
+    ],
     "snapshots": [
-      { "tick": 10, "path": "shades[id=S1].state", "equals": "stunned" },
-      { "tick": 10, "path": "shades[id=S1].pos", "equals": [0, 1, -6.942], "tol": 0.01 },
-      { "tick": 10, "path": "player.carried", "equals": 3 },
-      { "tick": 10, "path": "score", "equals": 20 }
+      {
+        "tick": 20,
+        "path": "shades[id=S1].state",
+        "equals": "stunned"
+      },
+      {
+        "tick": 20,
+        "path": "shades[id=S1].pos",
+        "equals": [
+          0,
+          1,
+          -7.933
+        ],
+        "tol": 0.01
+      },
+      {
+        "tick": 20,
+        "path": "player.carried",
+        "equals": 2
+      },
+      {
+        "tick": 20,
+        "path": "score",
+        "equals": 5
+      }
     ]
   }
 }

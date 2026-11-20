@@ -1,0 +1,48 @@
+{
+  "requirement": "P2 Đêm 1 chuẩn hóa: 20 đom đóm lúc đầu; 2 Bóng Mực tại tick 300 (S1,S2 shade_spawned)",
+  "desc": "20 đom đóm ở tick 0; chưa có Bóng Mực; 2 shade_spawned (S1,S2) tại tick 300; đứng yên",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 310,
+  "expect": {
+    "events": [
+      {
+        "name": "shade_spawned",
+        "tick": 300,
+        "data": {
+          "id": "S1"
+        },
+        "count": 1
+      },
+      {
+        "name": "shade_spawned",
+        "tick": 300,
+        "data": {
+          "id": "S2"
+        },
+        "count": 1
+      },
+      {
+        "name": "night_start",
+        "data": {
+          "night": 1
+        },
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 0,
+        "path": "motes_active",
+        "equals": 20
+      },
+      {
+        "tick": 290,
+        "path": "motes_active",
+        "min": 20
+      }
+    ]
+  }
+}

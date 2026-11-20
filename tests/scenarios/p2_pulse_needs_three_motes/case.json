@@ -1,0 +1,26 @@
+{
+  "requirement": "P2 Tỏa Sáng: không đủ 3 đom đóm thì không kích hoạt",
+  "desc": "carried 2 < 3: pulse bị bỏ qua, không event, carried vẫn 2, Bóng Mực không choáng",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 30,
+  "expect": {
+    "no_events": [
+      "pulse"
+    ],
+    "snapshots": [
+      {
+        "tick": 30,
+        "path": "player.carried",
+        "equals": 2
+      },
+      {
+        "tick": 30,
+        "path": "shades[id=S1].state",
+        "equals": "chase"
+      }
+    ]
+  }
+}

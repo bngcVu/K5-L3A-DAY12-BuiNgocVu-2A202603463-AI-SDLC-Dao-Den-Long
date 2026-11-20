@@ -5,22 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Đảo Đèn Lồng</title>
 <style>
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #0d0a1a; font-family: system-ui, sans-serif; color: #ffe2a8; }
-  canvas { display: block; }
-  #hud { position: fixed; top: 10px; left: 12px; right: 12px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; font-size: 18px; text-shadow: 0 1px 4px #000; }
-  #hud span { background: rgba(20,12,40,.55); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(255,170,60,.35); }
-  #help { position: fixed; bottom: 10px; left: 12px; font-size: 13px; opacity: .75; pointer-events: none; }
-  #msg { position: fixed; top: 60px; width: 100%; text-align: center; font-size: 20px; pointer-events: none; text-shadow: 0 1px 6px #000; }
-  #end { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; background: rgba(10,6,24,.72); text-align: center; }
-  #end h1 { font-size: 44px; margin: 0 0 8px; } #end p { font-size: 20px; margin: 4px; }
-  #end button { margin-top: 18px; font-size: 20px; padding: 10px 28px; border-radius: 14px; border: 0; background: #ffb347; color: #2a1608; cursor: pointer; }
+  :root { --sky:#0E1430; --mist:#1B2350; --lamp:#FFB347; --core:#FFE9B0; --gold:#F2C14E; --red:#C8102E; --danger:#FF5A5F; --text:#F5F1E6; }
+  html, body { margin:0; height:100%; overflow:hidden; background:var(--sky); font-family:system-ui,sans-serif; color:var(--text); user-select:none; }
+  canvas { display:block; }
+  .hud { position:fixed; pointer-events:none; text-shadow:0 1px 5px #000; }
+  .pill { background:rgba(14,20,48,.62); border:1px solid rgba(242,193,78,.45); border-radius:12px; padding:6px 12px; font-size:18px; }
+  #flames { top:12px; left:14px; font-size:24px; letter-spacing:3px; }
+  #clock { top:12px; left:50%; transform:translateX(-50%); font-size:26px; font-variant-numeric:tabular-nums; }
+  #clock.low { color:var(--danger); border-color:var(--danger); animation:blink .8s steps(2) infinite; }
+  @keyframes blink { 50% { opacity:.35; } }
+  #topright { top:12px; right:14px; display:flex; gap:8px; }
+  #score { color:var(--gold); }
+  #motes { bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:4px; padding:8px 12px; }
+  #motes i { width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,229,138,.4); background:transparent; }
+  #motes i.on { background:radial-gradient(#FFF6C2,#FFE58A); box-shadow:0 0 8px #FFE58A; border-color:#FFE58A; }
+  #cds { bottom:16px; right:14px; display:flex; gap:10px; }
+  .cd { width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; text-align:center;
+        background:conic-gradient(rgba(14,20,48,.85) calc(var(--p,0)*360deg), rgba(242,193,78,.85) 0); border:2px solid var(--gold); }
+  .cd.ready { box-shadow:0 0 12px var(--gold); }
+  #prompt { bottom:84px; left:50%; transform:translateX(-50%); font-size:20px; display:none; }
+  #arrow { width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-bottom:30px solid var(--lamp); display:none; filter:drop-shadow(0 0 6px #000); }
+  #toast { top:70px; width:100%; text-align:center; font-size:20px; }
+  #help { bottom:10px; left:12px; font-size:12px; opacity:.6; }
+  .screen { position:fixed; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; background:rgba(14,20,48,.82); text-align:center; padding:20px; }
+  .screen.show { display:flex; }
+  .screen h1 { font-size:46px; margin:0 0 6px; color:var(--lamp); }
+  .screen h2 { font-size:30px; margin:0 0 10px; color:var(--gold); }
+  .screen p { font-size:19px; margin:5px; max-width:640px; line-height:1.4; }
+  .screen button { margin:6px; font-size:19px; padding:10px 30px; min-width:240px; border-radius:14px; border:0; background:var(--lamp); color:#2a1608; cursor:pointer; }
+  .screen button.sec { background:rgba(245,241,230,.15); color:var(--text); border:1px solid rgba(245,241,230,.35); }
+  .screen label { display:block; margin:10px; font-size:18px; } .screen input[type=range] { width:240px; vertical-align:middle; }
 </style>
 </head>
 <body>
-<div id="hud"><span id="flames"></span><span id="carry"></span><span id="lamps"></span><span id="time"></span><span id="score"></span></div>
-<div id="msg"></div>
-<div id="help">WASD đi · Chuột kéo xoay camera · Space nhảy · E nạp đèn · F tỏa sáng (tốn 2 đom đóm) · R chơi lại</div>
-<div id="end"><h1 id="endTitle"></h1><p id="endText"></p><p id="endScore"></p><button id="again">Chơi lại (R)</button></div>
+<div id="flames" class="hud pill"></div>
+<div id="clock" class="hud pill"></div>
+<div id="topright" class="hud"><span id="lamps" class="pill"></span><span id="score" class="pill"></span></div>
+<div id="motes" class="hud pill"></div>
+<div id="cds" class="hud"><div id="cdDash" class="cd">Lướt<br>Shift</div><div id="cdPulse" class="cd">Sáng<br>F</div></div>
+<div id="prompt" class="hud pill"></div>
+<div id="arrow" class="hud"></div>
+<div id="toast" class="hud"></div>
+<div id="help" class="hud">WASD đi · Kéo chuột xoay · Space nhảy · Shift lướt · E nạp đèn · F tỏa sáng · Esc/P tạm dừng · R chơi lại đêm</div>
+
+<div id="menu" class="screen show"><h1>Đảo Đèn Lồng</h1><p>Sương đen đã nuốt ánh sáng của biển mây. Hãy cùng Mây thắp lại những Đèn Lồng Lớn.</p>
+  <button id="bStart">Bắt đầu</button><button id="bSettings0" class="sec">Cài đặt</button></div>
+<div id="intro" class="screen"><h2 id="introName"></h2><p id="introText"></p><button id="bGo">Vào đêm</button></div>
+<div id="pause" class="screen"><h2>Tạm dừng</h2>
+  <button id="bResume">Tiếp tục</button><button id="bRetry" class="sec">Chơi lại Đêm</button><button id="bSettings" class="sec">Cài đặt</button><button id="bMenu" class="sec">Về menu</button></div>
+<div id="settings" class="screen"><h2>Cài đặt</h2>
+  <label>Âm lượng <input id="sVol" type="range" min="0" max="100"></label>
+  <label>Độ nhạy chuột <input id="sSens" type="range" min="10" max="100"></label><button id="bBack">Xong</button></div>
+<div id="result" class="screen"><h2 id="resTitle"></h2><p id="resText"></p><p id="resScore"></p><button id="bNext">Tiếp tục</button><button id="bRetry2" class="sec">Chơi lại Đêm</button></div>
+<div id="dawn" class="screen"><h1>Bình Minh</h1><p>Mọi ngọn đèn đã sáng, biển mây ửng vàng. Cảm ơn Mây!</p><p id="dawnScore"></p><button id="bAgain">Chơi lại từ đầu</button></div>
+
 <script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js" } }</script>
 <script type="module" src="/main.js"></script>
 </body>

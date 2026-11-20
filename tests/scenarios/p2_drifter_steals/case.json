@@ -1,0 +1,48 @@
+{
+  "requirement": "P2 Gió Lạc: cướp min(3, mang) khi chạm ≤1.2 m, rồi bỏ chạy 240 tick và biến mất",
+  "desc": "carried 6 ≥5 và cách 10 m ≤15 → chase. 7 m/s = 0.1167 m/tick; cần đi 10-1.2=8.8 m → 76 tick (75 tick mới đi 8.75 m). Cướp 3 → carried 3. flee 240 tick → removed tại ~tick 316; tick 330 state removed",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 340,
+  "expect": {
+    "events": [
+      {
+        "name": "drifter_steal",
+        "tick": 76,
+        "data": {
+          "drifter_id": "D1",
+          "amount": 3,
+          "carried": 3
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "player_hit"
+    ],
+    "snapshots": [
+      {
+        "tick": 100,
+        "path": "drifters[id=D1].state",
+        "equals": "flee"
+      },
+      {
+        "tick": 100,
+        "path": "drifters[id=D1].stolen",
+        "equals": 3
+      },
+      {
+        "tick": 330,
+        "path": "drifters[id=D1].state",
+        "equals": "removed"
+      },
+      {
+        "tick": 330,
+        "path": "player.carried",
+        "equals": 3
+      }
+    ]
+  }
+}

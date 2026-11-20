@@ -1,0 +1,41 @@
+{
+  "requirement": "P2 Vùng an toàn: đèn vừa sáng đẩy Bóng Mực ra mép 6 m trong ≤30 tick, không gây sát thương",
+  "desc": "Đèn L1 (0,0,10), người chơi tại đèn mang 10; S1 cách đèn 3 m. Nạp ở bước 1 → sáng tick 2 (+100 +10×10 = 200 điểm). S1 bị đẩy tới mép 6 m (x=6) trong ≤30 tick, rồi bị chặn ở mép; không player_hit",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 60,
+  "expect": {
+    "events": [
+      {
+        "name": "lantern_lit",
+        "tick": 2,
+        "data": {
+          "lantern_id": "L1"
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "player_hit"
+    ],
+    "snapshots": [
+      {
+        "tick": 40,
+        "path": "shades[id=S1].pos",
+        "equals": [
+          6,
+          1,
+          10
+        ],
+        "tol": 0.1
+      },
+      {
+        "tick": 40,
+        "path": "score",
+        "equals": 200
+      }
+    ]
+  }
+}

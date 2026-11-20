@@ -1,2 +1,24 @@
-{ "player": { "pos": [0,0,0], "carried": 10, "flames": 3 }, "random_motes": false, "random_shades": false,
-  "motes": [], "shades": [{ "id": "S1", "pos": [10,1,0] }] }
+{
+  "player": {
+    "pos": [
+      0,
+      0,
+      0
+    ],
+    "carried": 10,
+    "flames": 3
+  },
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [],
+  "shades": [
+    {
+      "id": "S1",
+      "pos": [
+        10.05,
+        1,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "requirement": "P2 Gió Lạc: Tỏa Sáng trúng lúc chase → flee, không cướp",
+  "desc": "D1 đang chase cách 3 m (3D tới tâm ≈3.08 ≤5): pulse ở tick 2 → flee, không drifter_steal; carried 6-3=3",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 20,
+  "expect": {
+    "no_events": [
+      "drifter_steal"
+    ],
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "drifters[id=D1].state",
+        "equals": "flee"
+      },
+      {
+        "tick": 10,
+        "path": "player.carried",
+        "equals": 3
+      }
+    ]
+  }
+}

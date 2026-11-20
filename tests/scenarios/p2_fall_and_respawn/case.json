@@ -1,0 +1,55 @@
+{
+  "requirement": "P2 Rơi khỏi đảo: -1 Ngọn Lửa, mất hết đom đóm, chờ 60 tick, hồi sinh ở điểm xuất phát, bất tử 90 tick",
+  "desc": "Đi +X từ (39,0,0) qua mép 40 m (~tick 10), dừng ở tick 15 rồi rơi thẳng: Y<-10 sau ~60 tick → player_hit by fall (flames 2, dropped 0, lost 4) trong tick 66..78; hồi sinh ~60 tick sau: tại tick 150 pos (0,0,0), flames 2, invuln true",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 160,
+  "expect": {
+    "events": [
+      {
+        "name": "player_hit",
+        "data": {
+          "by": "fall",
+          "flames": 2,
+          "dropped": 0,
+          "lost": 4
+        },
+        "count": 1,
+        "tick_min": 66,
+        "tick_max": 78
+      }
+    ],
+    "no_events": [
+      "game_over"
+    ],
+    "snapshots": [
+      {
+        "tick": 150,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          0
+        ],
+        "tol": 0.01
+      },
+      {
+        "tick": 150,
+        "path": "player.flames",
+        "equals": 2
+      },
+      {
+        "tick": 150,
+        "path": "player.invuln",
+        "equals": true
+      },
+      {
+        "tick": 150,
+        "path": "player.carried",
+        "equals": 0
+      }
+    ]
+  }
+}

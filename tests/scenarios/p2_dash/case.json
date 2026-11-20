@@ -1,0 +1,49 @@
+{
+  "requirement": "P2 Lướt: 14 m/s, 0.2 s, hồi 1.5 s tính từ lúc bắt đầu",
+  "desc": "Đứng yên mặt +Z, lướt ở bước 0: 14×0.2=2.8 m → z=2.8 tại tick 12. Lần 2 ở bước 30 bị bỏ qua (cd 90 tick); lần 3 ở bước 90 được → dash ở tick 1 và 91; tick 96 mới lướt 6 bước = +1.4 m → z=4.2",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 12,
+  "ticks": 100,
+  "expect": {
+    "events": [
+      {
+        "name": "dash",
+        "tick": 1,
+        "count": 1
+      },
+      {
+        "name": "dash",
+        "tick": 91,
+        "count": 1
+      },
+      {
+        "name": "dash",
+        "count": 2
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 12,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          2.8
+        ],
+        "tol": 0.01
+      },
+      {
+        "tick": 96,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          4.2
+        ],
+        "tol": 0.01
+      }
+    ]
+  }
+}

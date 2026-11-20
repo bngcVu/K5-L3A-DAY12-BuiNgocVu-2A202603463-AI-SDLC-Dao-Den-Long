@@ -1,0 +1,26 @@
+{
+  "requirement": "P2 Rơi khỏi đảo: hết Ngọn Lửa thì thua ngay, không hồi sinh",
+  "desc": "flames=1, rơi → game_over lost/no_flames trong tick 66..78, end state lost",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 200,
+  "expect": {
+    "events": [
+      {
+        "name": "game_over",
+        "data": {
+          "result": "lost",
+          "reason": "no_flames"
+        },
+        "count": 1,
+        "tick_min": 66,
+        "tick_max": 78
+      }
+    ],
+    "end": {
+      "state": "lost"
+    }
+  }
+}

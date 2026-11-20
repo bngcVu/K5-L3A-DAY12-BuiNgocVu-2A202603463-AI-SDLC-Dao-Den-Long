@@ -1,0 +1,10 @@
+{
+  "requirement": "P2 Định dạng v1.1 + tất định với spawn ngẫu nhiên (Đêm 2, Gió Lạc, bùa)",
+  "desc": "Chạy Đêm 2 mặc định 3000 tick seed 7, không input: output đúng định dạng v1.1 và 2 lần chạy giống hệt (đủ lâu để Gió Lạc sinh ở tick 1200, 2400)",
+  "min_version": "1.1",
+  "seed": 7,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 3000,
+  "expect": {}
+}

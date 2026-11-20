@@ -1,6 +1,6 @@
-# Đảo Đèn Lồng (Phase 1)
+# Đảo Đèn Lồng (Phase 2 — "Ba hòn đảo")
 
-Game 3D góc nhìn thứ ba: **Mây**, người giữ đèn nhỏ tuổi, gom đom đóm để thắp lại 5 Đèn Lồng Lớn trên Đảo Bến và tỏa sáng xua **Bóng Mực**. Logic tất định 60 tick/s nằm ở `src/sim/`, render bằng Three.js ở `web/`.
+Game 3D góc nhìn thứ ba: **Mây**, người giữ đèn nhỏ tuổi, gom đom đóm để thắp lại các Đèn Lồng Lớn qua **3 Đêm** (Đảo Bến, Đảo Cau, Đảo Chuông), né **Bóng Mực** và **Gió Lạc**. Logic tất định 60 tick/s ở `src/sim/`, render Three.js ở `web/`.
 
 > Video demo: _(thêm ở Phase 4)_
 
@@ -14,50 +14,57 @@ npm start          # mở http://localhost:8080
 npm test           # (tùy chọn) unit test
 ```
 
-Kiểm chứng đầy đủ (unit test + scenario headless + tất định): `./scripts/check.sh` (cần `python3`).
+Kiểm chứng đầy đủ (unit test + scenario headless + tất định): `./scripts/check.sh` (cần `python3` hoặc `python`).
 
 ## Điều khiển
 
 | Phím | Việc |
 |---|---|
-| W A S D | Đi (theo hướng camera) |
-| Kéo chuột | Xoay camera |
-| Space | Nhảy |
-| E | Nạp đom đóm vào đèn gần nhất (trong 2.5 m) |
-| F | Tỏa sáng: xua Bóng Mực (tốn 2 đom đóm, hồi 1.5 s) |
-| R | Chơi lại (cũng có nút trên màn hình thắng/thua) |
+| W A S D / mũi tên | Đi (theo hướng camera) |
+| Kéo chuột | Xoay camera (độ nhạy trong Cài đặt) |
+| Space | Nhảy (chỉ khi chạm đất) |
+| Shift | Lướt (14 m/s, 0.2 s, hồi 1.5 s) |
+| E | Nạp đom đóm vào đèn chưa sáng gần nhất (trong 2 m) |
+| F | Tỏa Sáng: choáng và đẩy lùi Bóng Mực trong 5 m (tốn 3 đom đóm, hồi 3 s) |
+| Esc / P | Tạm dừng: Tiếp tục / Chơi lại Đêm / Cài đặt / Về menu |
+| R | Chơi lại Đêm |
 
 ## Luật & cách tính điểm
 
-- Nhặt đom đóm: đi lại gần (≤ 1.2 m). Mang tối đa 10. Mỗi đèn cần 10 đom đóm để sáng. Thắp đủ 5 đèn trong 300 s thì **thắng**; hết đêm hoặc hết 3 ngọn lửa thì **thua**.
-- Bóng Mực đuổi Mây (chậm hơn Mây), chạm thì mất 1 ngọn lửa và rơi một nửa số đom đóm đang mang, bất tử 1.5 s. Chúng không vào được vòng 4 m quanh đèn.
-- Điểm: +10 mỗi đom đóm nhặt · +100 mỗi đèn thắp · +20 mỗi Bóng Mực bị choáng · khi thắng: +1 mỗi giây còn lại, +50 mỗi ngọn lửa còn lại.
-- HUD: ngọn lửa, đom đóm đang mang, đèn đã sáng, thời gian đêm, điểm. Đảo sáng dần và ấm lên theo số đèn đã thắp.
+- Mang tối đa 10 đom đóm; mỗi đèn cần 10 (nạp nhiều lần được). Thắp hết đèn trước khi hết đêm (300/330/360 s) thì thắng Đêm; hết 3 Ngọn Lửa hoặc hết giờ thì thua và chơi lại Đêm đó.
+- Bóng Mực chạm: −1 Ngọn Lửa, rơi nửa số đom đóm, bất tử 1.5 s. Rơi khỏi đảo (Y < −10): −1 Ngọn Lửa, mất hết đom đóm, hồi sinh sau 1 s. Đèn đã sáng tạo vùng an toàn 6 m.
+- **Gió Lạc** (Đêm 2, 3) cướp 3 đom đóm khi bạn mang ≥ 5 đom đóm; Tỏa Sáng làm nó bỏ chạy và thả lại số đã cướp. **Bùa Gió** (lá bùa đỏ viền vàng): 10 s chạy nhanh 7.2 m/s và lướt không hồi chiêu. Đêm 2 có bục nhảy (vòng vàng) bắn bạn sang đảo kia; Đêm 3 có tầng, dốc, vách đứng và gió mạnh mỗi 30 s (báo trước 2 s bằng lá bay và âm thanh).
+- Điểm: +10 mỗi đom đóm nạp · +100 mỗi đèn thắp · +5 mỗi Bóng Mực trúng Tỏa Sáng · khi thắng +2 mỗi giây còn lại và +50 mỗi Ngọn Lửa. Tổng điểm game là tổng điểm các Đêm đã thắng; thắng Đêm 3 thì tới màn Bình Minh.
+- HUD: Ngọn Lửa, đồng hồ mm:ss (đỏ, nhấp nháy ≤ 30 s), đèn k/n và điểm, thanh đom đóm 10 ô, hồi chiêu Lướt/Tỏa Sáng, nhắc "E — Nạp ánh sáng (x/10)", mũi tên tới đèn chưa sáng ở ngoài màn hình.
 
-## Chế độ headless (Test Contract v1.0)
+## Chế độ headless (Test Contract v1.1)
 
 ```bash
 node src/headless.js --seed 1 --night 1 --ticks 600 --out out.jsonl \
-  [--scenario s.json] [--inputs i.json] [--snapshot-every 10]
+  [--scenario s.json] [--inputs i.json] [--snapshot-every 10]      # --night 1 | 2 | 3
 ```
 
-Khai báo trong [game.contract.json](game.contract.json). Tuning thực tế (khớp `src/sim/config.js`): tốc độ 6 m/s, mang 10, đèn cần 10, 5 đèn, nhặt 1.2 m, tương tác 2.5 m, pulse tốn 2 / bán kính 6 m / choáng 3 s / đẩy 3 m / hồi 1.5 s, đêm 300 s, 3 ngọn lửa, bất tử 1.5 s, rơi 50 % đom đóm, vòng an toàn 4 m, Bóng Mực 3.5 m/s với bán kính chạm 1 m, `fall_enabled=false` (rìa đảo là tường vô hình nên không có rơi/event `fall`). Điểm: 10 / 100 / 20 / 1 / 50.
+Khai báo ở [game.contract.json](game.contract.json) (v1.1, tuning = số chuẩn của Ticket-02, khớp `src/sim/config.js`, có unit test so khớp; `fall_enabled: true`). Một Đêm đầy đủ (21.600 tick) chạy ≈ 0.3 s. Tuning chi tiết và các số khác: [docs/spec-phase-2.md](docs/spec-phase-2.md).
 
-Giả định cho phần PRD còn mơ hồ: [docs/assumptions.md](docs/assumptions.md).
+Giả định cho chỗ ticket chưa nói rõ: [docs/spec-phase-2.md](docs/spec-phase-2.md) (mục B1–B20; Phase 1: [docs/assumptions.md](docs/assumptions.md)).
 
 ## Bằng chứng
 
-- `./scripts/check.sh --label phase-1` → [evidence/phase-1/report.md](evidence/phase-1/report.md): 10 scenario (nhặt, nạp đèn, pulse, bị chạm, thua hết lửa, thua dawn, thắng, safe radius, định dạng/exit 2, chạy mặc định) + mỗi case chạy 2 lần so từng byte (tất định) + 8 unit test.
-- Ảnh chụp màn chơi: `evidence/phase-1/screens/`.
-- Thay đổi test/harness có lý do: [docs/changes.md](docs/changes.md). Nhật ký dùng AI: [docs/ai-log.md](docs/ai-log.md).
+- `./scripts/check.sh --label phase-2` → [evidence/phase-2/report.md](evidence/phase-2/report.md): 32 scenario (10 của Phase 1 còn đạt với số chuẩn + 22 mới cho lướt, tỏa sáng, vùng an toàn, rơi/hồi sinh, Gió Lạc, bùa, bục nhảy, vách/dốc Đêm 3, gió, tạm dừng, điểm, bản đồ, hiệu năng) + mỗi case chạy 2 lần so từng byte + 14 unit test. Bằng chứng Phase 1 giữ ở `evidence/phase-1/`.
+- Tiêu chí nghiệm thu từng tính năng ↔ scenario: [docs/spec-phase-2.md](docs/spec-phase-2.md).
+- Ảnh chụp màn chơi (trình duyệt headless): `evidence/phase-2/screens/night1..3.png`.
+- Test cũ phải sửa vì số chuẩn mới, cùng lý do: [docs/changes.md](docs/changes.md). Nhật ký dùng AI: [docs/ai-log.md](docs/ai-log.md).
 - CI: `.github/workflows/check.yml` chạy cùng `check.sh` mỗi lần push.
 
 ## Sáng tạo của tôi
 
-- **Cá Mây**: vài chú cá trắng tím bơi quanh đảo trong biển mây, cộng âm chuông nhỏ (WebAudio) khi nhặt/nạp/thắp đèn và lời dẫn truyện ngắn đầu màn.
-- Bằng chứng phần cũ vẫn đúng: chỉ nằm trong `web/main.js` (không import vào `src/sim`), nên output headless không đổi; `check.sh` vẫn 100 % đạt và 2 lần chạy giống hệt byte.
+- **Cá Mây** (Phase 1): vài chú cá trắng tím bơi quanh đảo trong biển mây; chỉ ở `web/`, không đụng headless. _Ở Phase 2 phần này chưa được vẽ lại trên bản client mới._
+- Âm thanh do tôi tổng hợp bằng WebAudio (nhạc nền ngũ cung ấm + hiệu ứng), không dùng asset ngoài.
+- Bằng chứng phần cũ vẫn đúng: phần thêm nằm hoàn toàn trong `web/`, không import vào `src/sim`; `check.sh` vẫn 100 % đạt và 2 lần chạy giống hệt byte.
 
 ## Hạn chế đã biết (trung thực)
 
-- Chưa có kiểm thử tự động cho phần đồ họa; chỉ có ảnh chụp trình duyệt headless.
-- Chưa chạy thử trên macOS/Linux thật (phát triển trên Windows); runner mẫu đã được vá cho Windows, xem `docs/changes.md`.
+- **Chưa đo FPS** (yêu cầu ≥ 30 FPS trung bình ở 1280×720). Chỉ có ảnh chụp từ Chrome headless (render phần mềm), chưa chơi tay toàn bộ 3 Đêm trong trình duyệt thật: menu → intro → kết quả → Bình Minh, Cài đặt (lưu giữa các lần mở), âm thanh và mũi tên chỉ đường **chưa được kiểm bằng tay**.
+- Ticket không nêu điểm xuất phát Đêm 3 nên chọn (0,0,−12); các mơ hồ khác ở `docs/spec-phase-2.md` mục B.
+- Bóng Mực đuổi theo đường thẳng, không tìm đường: ở Đêm 3 có thể kẹt dưới vách tầng.
+- Phát triển trên Windows; macOS/Linux chỉ được CI trên GitHub kiểm.

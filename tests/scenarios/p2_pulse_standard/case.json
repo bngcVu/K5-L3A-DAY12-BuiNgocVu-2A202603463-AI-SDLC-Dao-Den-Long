@@ -1,0 +1,63 @@
+{
+  "requirement": "P2 Tỏa Sáng: 3 đom đóm, 5 m, choáng 120 tick, đẩy 4 m trong 15 tick, +5 điểm",
+  "desc": "carried 5, S1 cách 4 m (3D tới tâm = √(16+0.04) ≈ 4.005 ≤ 5). Bước 0 S1 đuổi 4/60 → z=-3.933; pulse bước 1 (event tick 2): carried 5-3=2, +5 điểm; đẩy 4 m → z=-7.933 tại tick 20; còn choáng ở tick 120 (choáng tick 2..121), hết choáng ở tick 130",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 130,
+  "expect": {
+    "events": [
+      {
+        "name": "pulse",
+        "tick": 2,
+        "data": {
+          "stunned_ids": [
+            "S1"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "player_hit"
+    ],
+    "snapshots": [
+      {
+        "tick": 20,
+        "path": "shades[id=S1].pos",
+        "equals": [
+          0,
+          1,
+          -7.933
+        ],
+        "tol": 0.01
+      },
+      {
+        "tick": 20,
+        "path": "shades[id=S1].state",
+        "equals": "stunned"
+      },
+      {
+        "tick": 20,
+        "path": "player.carried",
+        "equals": 2
+      },
+      {
+        "tick": 20,
+        "path": "score",
+        "equals": 5
+      },
+      {
+        "tick": 120,
+        "path": "shades[id=S1].state",
+        "equals": "stunned"
+      },
+      {
+        "tick": 130,
+        "path": "shades[id=S1].state",
+        "equals": "chase"
+      }
+    ]
+  }
+}

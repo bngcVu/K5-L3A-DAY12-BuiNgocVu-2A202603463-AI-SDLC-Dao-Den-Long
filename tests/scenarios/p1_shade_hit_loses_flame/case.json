@@ -1,10 +1,32 @@
 {
   "requirement": "P1: Bóng Mực chạm thì mất máu; bất tử ngắn; rơi đom đóm",
-  "desc": "Mang 10, shade cách 10 m, speed 3.5, hit radius 1: chạm khi khoảng cách ≤1 sau ~9/3.5=2.57 s. Mất 1 flame, rơi floor(10*0.5)=5. Trong invuln 1.5 s không bị chạm lần 2 (chạy 200 tick)",
-  "seed": 1, "night": 1, "ticks": 200, "snapshot_every": 10,
+  "desc": "Chuẩn v1.1: mang 10, shade cách 10.05 m, 4 m/s, chạm khi ≤1 m: đi 9.05 m / (4/60) = 135.75 → hit tick 136. -1 lửa, rơi floor(10/2)=5. Bất tử 90 tick (tới tick 225) nên không bị chạm lần 2 trong 200 tick",
+  "seed": 1,
+  "night": 1,
+  "ticks": 200,
+  "snapshot_every": 10,
   "expect": {
-    "events": [{ "name": "player_hit", "data": { "by": "shade", "flames": 2, "dropped": 5 }, "count": 1 }],
-    "no_events": ["game_over"],
-    "snapshots": [{ "tick": 200, "path": "player.carried", "equals": 5 }]
+    "events": [
+      {
+        "name": "player_hit",
+        "data": {
+          "by": "shade",
+          "flames": 2,
+          "dropped": 5
+        },
+        "count": 1,
+        "tick": 136
+      }
+    ],
+    "no_events": [
+      "game_over"
+    ],
+    "snapshots": [
+      {
+        "tick": 200,
+        "path": "player.carried",
+        "equals": 5
+      }
+    ]
   }
 }

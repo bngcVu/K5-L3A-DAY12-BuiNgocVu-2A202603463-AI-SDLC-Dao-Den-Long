@@ -27,7 +27,7 @@ function parseArgs(argv) {
   if (a.seed === undefined) throw new UsageError('thiếu --seed');
   if (a.ticks === undefined || a.ticks < 0) throw new UsageError('thiếu hoặc sai --ticks');
   if (!a.out) throw new UsageError('thiếu --out');
-  if (a.night !== 1) throw new UsageError('chỉ hỗ trợ --night 1 ở Phase 1');
+  if (![1, 2, 3].includes(a.night)) throw new UsageError('--night phải là 1, 2 hoặc 3');
   if (a.snapshotEvery < 1) throw new UsageError('--snapshot-every phải ≥ 1');
   return a;
 }
@@ -40,15 +40,16 @@ function loadJson(path, what) {
 
 function main() {
   const a = parseArgs(process.argv.slice(2));
-  const scenario = a.scenario ? validateScenario(loadJson(a.scenario, 'scenario')) : {};
+  const scenario = a.scenario ? validateScenario(loadJson(a.scenario, 'scenario'), a.night) : {};
   const frames = a.inputs ? validateInputs(loadJson(a.inputs, 'inputs')) : [];
 
-  const sim = new Sim({ seed: a.seed, scenario });
+  const sim = new Sim({ seed: a.seed, night: a.night, scenario });
   const lines = [];
   const push = (o) => lines.push(JSON.stringify(o));
   const input = { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false };
   let fi = 0;
   push(sim.snapshot()); // tick 0: sau khi dựng scenario, trước input
+  for (const e of sim.startEvents) push(e);
   for (let k = 0; k < a.ticks && sim.state === 'playing'; k++) {
     while (fi < frames.length && frames[fi].tick === k) {
       const { tick, ...rest } = frames[fi++];
@@ -57,7 +58,7 @@ function main() {
     for (const e of sim.step(input)) push(e);
     if (sim.tick % a.snapshotEvery === 0) push(sim.snapshot());
   }
-  push({ type: 'end', ticks: sim.steps, state: sim.state, score: sim.score });
+  push({ type: 'end', ticks: sim.tick, state: sim.state, score: sim.score });
   writeFileSync(a.out, lines.join('\n') + '\n');
 }
 

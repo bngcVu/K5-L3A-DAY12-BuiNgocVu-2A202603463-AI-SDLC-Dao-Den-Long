@@ -1,0 +1,52 @@
+{
+  "requirement": "P2 Bùa Gió: nhặt như đom đóm, hiệu lực 600 tick, chạy 7.2 m/s, xuất hiện lại sau 2700 tick",
+  "desc": "Bùa C1 tại (0,0,3), đi +Z 6 m/s: chạm ≤1.0 m khi z≈2 → tick 20..21 (charm_picked, charm_ticks 600). Sau đó vận tốc 7.2; charm_s ≈ 9.8; C1 không còn available, respawn_s ≈ 44.8",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 30,
+  "expect": {
+    "events": [
+      {
+        "name": "charm_picked",
+        "data": {
+          "charm_id": "C1",
+          "charm_ticks": 600
+        },
+        "count": 1,
+        "tick_min": 20,
+        "tick_max": 21
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 30,
+        "path": "player.vel",
+        "equals": [
+          0,
+          0,
+          7.2
+        ],
+        "tol": 0.001
+      },
+      {
+        "tick": 30,
+        "path": "player.charm_s",
+        "min": 9.7,
+        "max": 10
+      },
+      {
+        "tick": 30,
+        "path": "charms[id=C1].available",
+        "equals": false
+      },
+      {
+        "tick": 30,
+        "path": "charms[id=C1].respawn_s",
+        "min": 44.7,
+        "max": 45
+      }
+    ]
+  }
+}

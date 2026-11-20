@@ -1,0 +1,35 @@
+{
+  "requirement": "P2 Bùa Gió: Lướt không hồi chiêu",
+  "desc": "Có bùa 600 tick: lướt ở bước 0 và bước 20 (trước 90 tick) đều được → 2 event dash (tick 1 và 21); lướt vẫn 2.8 m mỗi lần",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 40,
+  "expect": {
+    "events": [
+      {
+        "name": "dash",
+        "tick": 1,
+        "count": 1
+      },
+      {
+        "name": "dash",
+        "tick": 21,
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 40,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          5.6
+        ],
+        "tol": 0.01
+      }
+    ]
+  }
+}

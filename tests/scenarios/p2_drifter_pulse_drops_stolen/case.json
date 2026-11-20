@@ -1,0 +1,39 @@
+{
+  "requirement": "P2 Gió Lạc: Tỏa Sáng trúng lúc flee có mang đồ → thả toàn bộ đom đóm (thành đom đóm rơi)",
+  "desc": "D1 flee mang 3, cách 3 m: pulse tick 2 → drifter_drop amount 3; 3 đom đóm kind dropped tại chỗ (TTL 120 tick) → motes_active=3 ở tick 10",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 20,
+  "expect": {
+    "events": [
+      {
+        "name": "drifter_drop",
+        "tick": 2,
+        "data": {
+          "drifter_id": "D1",
+          "amount": 3
+        },
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "motes_active",
+        "equals": 3
+      },
+      {
+        "tick": 10,
+        "path": "motes[0].kind",
+        "equals": "dropped"
+      },
+      {
+        "tick": 10,
+        "path": "drifters[id=D1].stolen",
+        "equals": 0
+      }
+    ]
+  }
+}

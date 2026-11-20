@@ -1,0 +1,28 @@
+{
+  "requirement": "P2 Đêm 3: mép tầng là vách đứng, không đi lên được",
+  "desc": "Từ (0,0,30) đi -Z: vách tầng 1 ở r=24 → dừng ở z≈24.0..24.1 (bước vào r≤24 bị chặn), y=0, vẫn grounded",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 3,
+  "snapshot_every": 10,
+  "ticks": 120,
+  "expect": {
+    "snapshots": [
+      {
+        "tick": 120,
+        "path": "player.pos",
+        "equals": [
+          0,
+          0,
+          24.05
+        ],
+        "tol": 0.06
+      },
+      {
+        "tick": 120,
+        "path": "player.grounded",
+        "equals": true
+      }
+    ]
+  }
+}

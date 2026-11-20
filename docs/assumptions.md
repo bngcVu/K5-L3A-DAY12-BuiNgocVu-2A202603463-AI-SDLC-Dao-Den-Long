@@ -1,5 +1,7 @@
 # Giả định Phase 1 (PRD-0 + Test Contract v1.0)
 
+> **Phase 2:** Ticket-02 thay nhiều số liệu và luật (A1, A6, A9, A10, A11, A13, A14 bị thay hoặc làm rõ). Giả định Phase 2 và tiêu chí nghiệm thu nằm ở [spec-phase-2.md](spec-phase-2.md). Bảng dưới giữ làm lịch sử Phase 1.
+
 Chỗ PRD/contract chưa nói rõ → giả định dưới đây. Mỗi giả định có scenario hoặc unit test kiểm (cột cuối).
 
 | # | Chỗ mơ hồ | Giả định | Kiểm bằng |

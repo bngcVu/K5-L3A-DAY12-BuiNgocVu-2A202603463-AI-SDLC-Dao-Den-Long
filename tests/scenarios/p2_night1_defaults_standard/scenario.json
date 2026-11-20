@@ -1,0 +1,14 @@
+{
+  "player": {
+    "pos": [
+      0,
+      0,
+      0
+    ],
+    "carried": 0,
+    "flames": 3
+  },
+  "random_shades": true,
+  "random_motes": true,
+  "random_drifters": false
+}

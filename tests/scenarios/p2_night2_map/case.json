@@ -1,0 +1,50 @@
+{
+  "requirement": "P2 Đêm 2 Đảo Cau: 6 đèn theo bản đồ chuẩn, 330 s",
+  "desc": "Snapshot 0: L1 (0,0,20), L4 (70,0,20), L6 (53,0,-10); time_left 330; night 2",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 10,
+  "expect": {
+    "snapshots": [
+      {
+        "tick": 0,
+        "path": "night",
+        "equals": 2
+      },
+      {
+        "tick": 0,
+        "path": "time_left_s",
+        "equals": 330
+      },
+      {
+        "tick": 0,
+        "path": "lanterns[id=L1].pos",
+        "equals": [
+          0,
+          0,
+          20
+        ]
+      },
+      {
+        "tick": 0,
+        "path": "lanterns[id=L4].pos",
+        "equals": [
+          70,
+          0,
+          20
+        ]
+      },
+      {
+        "tick": 0,
+        "path": "lanterns[id=L6].pos",
+        "equals": [
+          53,
+          0,
+          -10
+        ]
+      }
+    ]
+  }
+}

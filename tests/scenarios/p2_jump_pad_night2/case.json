@@ -1,0 +1,33 @@
+{
+  "requirement": "P2 Bục nhảy Đêm 2: Y 14 m/s + ngang 24 m/s về tâm đảo kia, phím không ghi đè, đáp trong đảo đích ~1.4 s",
+  "desc": "Đứng trên bục (20,0,18); phím đi -X ở tick 0..1 bị bỏ qua (chỉ nhúc nhích 0.1 m trước khi chạm bục), rồi thả phím. Hướng tới B (70,0,0): (50,-18)/53.14; 84 tick bay × 0.4 m = 33.6 m → đáp ≈ (51.6,0,6.6) (±1.0), trong đảo B (cách tâm ≈19 < 28); tick 30 đang bay",
+  "min_version": "1.1",
+  "seed": 1,
+  "night": 2,
+  "snapshot_every": 10,
+  "ticks": 100,
+  "expect": {
+    "snapshots": [
+      {
+        "tick": 30,
+        "path": "player.grounded",
+        "equals": false
+      },
+      {
+        "tick": 100,
+        "path": "player.grounded",
+        "equals": true
+      },
+      {
+        "tick": 100,
+        "path": "player.pos",
+        "equals": [
+          51.6,
+          0,
+          6.6
+        ],
+        "tol": 1
+      }
+    ]
+  }
+}

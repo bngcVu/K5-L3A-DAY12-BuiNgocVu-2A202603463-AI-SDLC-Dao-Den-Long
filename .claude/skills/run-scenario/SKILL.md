@@ -42,3 +42,9 @@ Tạo `tests/scenarios/<pN>_<việc>/`:
 - Đổi `contract_version` → runner tự kiểm thêm trường v1.1.
 - Case cũ bị luật mới làm sai: sửa hoặc xóa, kèm một dòng lý do trong `docs/changes.md`.
 - Chạy `./scripts/check.sh --label phase-N` rồi commit thư mục `evidence/phase-N/` trước khi gắn tag.
+
+## Gợi ý từ Phase 2 (v1.1)
+- Đặt `min_version: "1.1"`, `night: 1|2|3` trong `case.json` cho case dùng tính năng mới. Scenario v1.1: `random_drifters`, `wind_enabled`, `drifters[]`, `charms[]`, `player.{invuln_ticks,dash_cd_ticks,pulse_cd_ticks,charm_ticks}`, `shades[].{state,state_ticks_left}`.
+- Tắt mọi nguồn ngẫu nhiên không liên quan: `random_motes/shades/drifters:false`, `wind_enabled:false`, `motes:[]`, `shades:[]`, `charms:[]`.
+- Tick bắt đầu hành vi: input ở bước k → event `tick = k+1`. Tránh đặt expect đúng biên khoảng cách; dùng `tick_min/tick_max` khi cần.
+- Case hiệu năng: `max_seconds` (vd Đêm đầy đủ 21.600 tick ≤ 30 s).
