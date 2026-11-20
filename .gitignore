@@ -8,3 +8,6 @@ node_modules/
 evidence/latest/
 evidence/ci/
 *.run2.jsonl
+
+
+docs/
