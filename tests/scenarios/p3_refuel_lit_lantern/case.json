@@ -1,0 +1,39 @@
+{
+  "requirement": "P3 §1 Châm dầu: used=min(mang, ceil((100−fuel)/10)), fuel += 10×used, +5/đom đóm, event refuel",
+  "desc": "L1 sáng fuel 50, mang 4. Bước 0 và 1 hao 2/60 → fuel 49.967; used=min(4, ceil(5.003)=6)=4; fuel=89.967 → refuel {amount 4, fuel 90.0} tick 2; điểm 4×5=20; carried 0; không lantern_lit",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 10,
+  "expect": {
+    "events": [
+      {
+        "name": "refuel",
+        "tick": 2,
+        "data": {
+          "lantern_id": "L1",
+          "amount": 4,
+          "fuel": 90
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "lantern_lit",
+      "deposit"
+    ],
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "score",
+        "equals": 20
+      },
+      {
+        "tick": 10,
+        "path": "player.carried",
+        "equals": 0
+      }
+    ]
+  }
+}

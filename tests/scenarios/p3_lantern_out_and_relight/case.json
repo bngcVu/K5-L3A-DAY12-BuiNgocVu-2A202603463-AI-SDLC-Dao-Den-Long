@@ -1,0 +1,82 @@
+{
+  "requirement": "P3 §1 Hết dầu → tắt, deposited 0, lantern_out, ever_lit; thắp lại chỉ cần 5 đom đóm; thắp lại +40 và +5/đom đóm",
+  "desc": "L1 sáng fuel 0.1 (6 đơn vị 1/60): hao 1/tick → fuel ≤0 ở tick 6 → lantern_out tick 6, ever_lit giữ true. Nạp 5 đom đóm (interact bước 20) → tick 21: deposit 5, lantern_lit relight:true, fuel=100, relit_count 1; điểm 5×5 + 40 = 65; sức chứa 10+2×(1 lần thắp) = 12",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 30,
+  "expect": {
+    "events": [
+      {
+        "name": "lantern_out",
+        "tick": 6,
+        "data": {
+          "lantern_id": "L1"
+        },
+        "count": 1
+      },
+      {
+        "name": "deposit",
+        "tick": 21,
+        "data": {
+          "lantern_id": "L1",
+          "amount": 5
+        },
+        "count": 1
+      },
+      {
+        "name": "lantern_lit",
+        "tick": 21,
+        "data": {
+          "lantern_id": "L1",
+          "relight": true
+        },
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "lanterns[id=L1].lit",
+        "equals": false
+      },
+      {
+        "tick": 10,
+        "path": "lanterns[id=L1].ever_lit",
+        "equals": true
+      },
+      {
+        "tick": 10,
+        "path": "lanterns[id=L1].fuel",
+        "equals": 0
+      },
+      {
+        "tick": 30,
+        "path": "lanterns[id=L1].fuel",
+        "equals": 99.9,
+        "tol": 0.15
+      },
+      {
+        "tick": 30,
+        "path": "lanterns[id=L1].relit_count",
+        "equals": 1
+      },
+      {
+        "tick": 30,
+        "path": "score",
+        "equals": 65
+      },
+      {
+        "tick": 30,
+        "path": "player.capacity",
+        "equals": 12
+      },
+      {
+        "tick": 30,
+        "path": "player.carried",
+        "equals": 0
+      }
+    ]
+  }
+}

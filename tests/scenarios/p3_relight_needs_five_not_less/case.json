@@ -1,0 +1,33 @@
+{
+  "requirement": "P3 §1 Thắp lại cần 5 đom đóm (đèn ever_lit); ít hơn chỉ tích lũy deposited",
+  "desc": "L1 ever_lit, tắt; mang 4 < 5: nạp 4 → deposit amount 4, deposited 4, không lantern_lit",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 10,
+  "expect": {
+    "events": [
+      {
+        "name": "deposit",
+        "tick": 2,
+        "data": {
+          "lantern_id": "L1",
+          "amount": 4,
+          "deposited": 4
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "lantern_lit"
+    ],
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "lanterns[id=L1].lit",
+        "equals": false
+      }
+    ]
+  }
+}

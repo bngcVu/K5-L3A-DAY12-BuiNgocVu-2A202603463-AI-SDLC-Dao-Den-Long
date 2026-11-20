@@ -1,6 +1,6 @@
 # AGENTS.md — Đảo Đèn Lồng
 
-Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có chế độ headless theo Test Contract (đang dùng: **v1.1** từ Phase 2, cập nhật khi đổi phase).
+Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có chế độ headless theo Test Contract (đang dùng: **v1.2** từ Phase 3, cập nhật khi đổi phase).
 
 ## Lệnh
 - Build: `npm install`
@@ -18,7 +18,7 @@ Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có ch�
 - Phần sáng tạo thêm: chỉ ở `web/`, tắt khi headless, không đổi output contract.
 
 ## Quy tắc làm việc
-- Spec + tiêu chí nghiệm thu từng phase: `docs/spec-phase-2.md` (mỗi tính năng Phần 3 một dòng + scenario). Đọc spec phase trong `docs/` trước khi code; trích nguyên văn yêu cầu khi lập kế hoạch. Không bịa yêu cầu; chỗ mơ hồ → ghi giả định vào `docs/assumptions.md`.
+- Spec + tiêu chí nghiệm thu từng phase: `docs/spec-phase-2.md`, `spec/phase-3.md` (quyết định lớn: `adr/`, breaking changes: `CHANGELOG.md`; `docs/` bị `.gitignore` chặn file mới → ghi tài liệu mới ở `adr/`, `spec/`, gốc repo) (mỗi tính năng Phần 3 một dòng + scenario). Đọc spec phase trong `docs/` trước khi code; trích nguyên văn yêu cầu khi lập kế hoạch. Không bịa yêu cầu; chỗ mơ hồ → ghi giả định vào `docs/assumptions.md`.
 - Mỗi tính năng mới: thêm ít nhất 1 scenario trong `tests/scenarios/` (dùng skill `run-scenario`), viết scenario/test **trước** khi code.
 - **Cấm**: sửa `expect` cho khớp output sai; sửa tay file trong `evidence/`; test luôn đạt; tắt test mà không ghi lý do trong `docs/changes.md`.
 - Commit nhỏ, mỗi commit một việc, thông điệp rõ (`feat:`, `fix:`, `test:`, `docs:`).
@@ -31,3 +31,6 @@ Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có ch�
 - Ticket mới làm sai giả định/số của phase trước: sửa `config.js` + `game.contract.json` cùng lúc, cập nhật scenario cũ kèm dòng lý do trong `docs/changes.md` (đã làm ở Phase 2).
 - Expect nằm ngay biên (khoảng cách đúng 1.0 m, dừng đúng ranh vách) phụ thuộc làm tròn số thực: dịch tình huống ra khỏi biên hoặc dùng `tick_min/tick_max`, đừng sửa mã cho khớp.
 - Giữ phím sau khi đáp/đến nơi làm lệch vị trí mong đợi: thả phím trong `inputs.json` khi chỉ muốn kiểm một giai đoạn.
+- Ticket **thay thế** luật cũ: viết ADR + CHANGELOG (mục breaking) trước, rồi sửa/xóa test cũ kèm lý do trong `docs/changes.md`; không để test cũ pass nhờ giữ luật cũ.
+- Dầu/đếm tick: dùng số nguyên đơn vị 1/60, chỉ làm tròn khi xuất; đừng cộng 1/60 dạng số thực.
+- Runner mẫu không biết contract mới: khi `contract_version` tăng, mở rộng `tools/run_scenarios.py` (và ghi `docs/changes.md`) trước khi chạy `check.sh`.

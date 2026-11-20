@@ -1,6 +1,6 @@
 {
   "requirement": "P2 Hiệu năng: một Đêm đầy đủ (21.600 tick) headless ≤ 30 s; định dạng v1.1",
-  "desc": "Đêm 3 không Bóng Mực, đứng yên: chạy đủ 21.600 tick → dawn (lost) ở tick 21600; ≤ 30 s; tất định",
+  "desc": "Đêm 3 dài 300 s = 18.000 tick (Ticket-03), không Bóng Mực, đứng yên, không đèn sáng: chạy hết đêm → lost/dawn ở tick 18000; ≤ 30 s; tất định",
   "min_version": "1.1",
   "seed": 1,
   "night": 3,
@@ -11,7 +11,7 @@
     "events": [
       {
         "name": "game_over",
-        "tick": 21600,
+        "tick": 18000,
         "data": {
           "result": "lost",
           "reason": "dawn"
@@ -20,7 +20,7 @@
       }
     ],
     "end": {
-      "ticks": 21600,
+      "ticks": 18000,
       "state": "lost"
     }
   }

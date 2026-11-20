@@ -1,0 +1,23 @@
+{
+  "requirement": "P3 §2 Đèn fuel<30 mất vùng an toàn (Bóng Mực vào được)",
+  "desc": "L1 sáng fuel 25 (<30) tại (0,0,10), người chơi đứng tại đèn; S1 cách 11.05 m đuổi (4 m/s): cần đi 10.05 m = 150.75 tick → chạm tick 151: player_hit (flames 2, dropped 0). Khác p1_safe_radius (fuel 100: bị chặn ở 6 m)",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 200,
+  "expect": {
+    "events": [
+      {
+        "name": "player_hit",
+        "tick": 151,
+        "data": {
+          "by": "shade",
+          "flames": 2,
+          "dropped": 0
+        },
+        "count": 1
+      }
+    ]
+  }
+}

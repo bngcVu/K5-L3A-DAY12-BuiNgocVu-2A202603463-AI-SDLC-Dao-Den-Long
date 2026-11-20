@@ -48,3 +48,8 @@ Tạo `tests/scenarios/<pN>_<việc>/`:
 - Tắt mọi nguồn ngẫu nhiên không liên quan: `random_motes/shades/drifters:false`, `wind_enabled:false`, `motes:[]`, `shades:[]`, `charms:[]`.
 - Tick bắt đầu hành vi: input ở bước k → event `tick = k+1`. Tránh đặt expect đúng biên khoảng cách; dùng `tick_min/tick_max` khi cần.
 - Case hiệu năng: `max_seconds` (vd Đêm đầy đủ 21.600 tick ≤ 30 s).
+
+## Gợi ý từ Phase 3 (v1.2)
+- `min_version: "1.2"` cho case dùng dầu/`drain`. Scenario: `lanterns[].{lit,fuel,ever_lit}` (đèn `lit:true` không `fuel` → 100), `player.successful_lights`, `shades[].{state:"drain",target_lantern_id}`.
+- Khi tính tay dầu: mỗi tick hao 1 đơn vị (1/60 fuel), mỗi bóng đang hút thêm 5 đơn vị; hao/hút xảy ra ở bước 2, **trước** tương tác của tick đó. Đèn sáng sau `lantern_lit` còn 100 và hao từ tick kế.
+- Đo thắng/thua ở bình minh: tick cuối = `time_left_s × 60`; điểm bình minh dùng fuel sau mọi hao của tick đó.

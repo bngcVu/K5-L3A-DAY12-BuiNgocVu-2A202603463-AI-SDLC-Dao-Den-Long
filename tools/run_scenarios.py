@@ -44,9 +44,15 @@ EVENT_KEYS = {
     "night_start": ["night"],
     "paused": [],
     "resumed": [],
+    # v1.2
+    "refuel": ["lantern_id", "amount", "fuel"],
+    "lantern_out": ["lantern_id"],
+    "fuel_drain": ["lantern_id", "shade_id", "fuel"],
 }
+V12_EVENTS = {"refuel", "lantern_out", "fuel_drain"}
 V10_EVENTS = {"mote_picked", "deposit", "lantern_lit", "pulse", "player_hit", "shade_spawned", "game_over"}
 SHADE_STATES_V11 = {"spawning", "wander", "chase", "recoil", "stunned"}
+SHADE_STATES_V12 = SHADE_STATES_V11 | {"drain"}
 
 
 def vtuple(v):
@@ -68,6 +74,7 @@ def validate(lines, version, every, ticks_req):
     """Trả về (errs, parsed). Kiểm theo Test Contract v1.0 / v1.1."""
     errs, objs = [], []
     v11 = vtuple(version) >= (1, 1)
+    v12 = vtuple(version) >= (1, 2)
     for i, raw in enumerate(lines, 1):
         try:
             objs.append(json.loads(raw))
@@ -111,14 +118,14 @@ def validate(lines, version, every, ticks_req):
             if o["state"] not in ok_states:
                 errs.append(f"{where}: state '{o['state']}' không hợp lệ")
             pl = o["player"]
-            pneed = ["pos", "flames", "carried"] + (["vel", "grounded", "invuln", "dash_cd_s", "pulse_cd_s", "charm_s"] if v11 else [])
+            pneed = ["pos", "flames", "carried"] + (["vel", "grounded", "invuln", "dash_cd_s", "pulse_cd_s", "charm_s"] if v11 else []) + (["capacity"] if v12 else [])
             pm = [k for k in pneed if k not in pl]
             if pm:
                 errs.append(f"{where}: player thiếu {pm}")
             if "pos" in pl:
                 check_pos(pl["pos"], f"{where} player", errs)
             for L in o["lanterns"]:
-                lm = [k for k in ("id", "pos", "lit", "deposited") if k not in L]
+                lm = [k for k in ("id", "pos", "lit", "deposited") + (("fuel", "ever_lit", "relit_count") if v12 else ()) if k not in L]
                 if lm:
                     errs.append(f"{where}: lantern thiếu {lm}")
                 else:
@@ -129,8 +136,9 @@ def validate(lines, version, every, ticks_req):
                     errs.append(f"{where}: shade thiếu {sm}")
                     continue
                 check_pos(s["pos"], f"{where} shade {s['id']}", errs)
-                if v11 and s["state"] not in SHADE_STATES_V11:
-                    errs.append(f"{where}: shade {s['id']} state '{s['state']}' không thuộc {sorted(SHADE_STATES_V11)}")
+                states = SHADE_STATES_V12 if v12 else SHADE_STATES_V11
+                if v11 and s["state"] not in states:
+                    errs.append(f"{where}: shade {s['id']} state '{s['state']}' không thuộc {sorted(states)}")
             if v11:
                 for m in o["motes"]:
                     mm = [k for k in ("id", "pos", "kind", "ttl_s") if k not in m]
@@ -152,7 +160,9 @@ def validate(lines, version, every, ticks_req):
 
         elif t == "event":
             name = o.get("name")
-            allowed = EVENT_KEYS if v11 else {k: EVENT_KEYS[k] for k in V10_EVENTS}
+            allowed = {k: v for k, v in EVENT_KEYS.items() if k in V10_EVENTS or (v11 and k not in V12_EVENTS) or v12}
+            if v12:
+                allowed = dict(allowed, lantern_lit=["lantern_id", "relight"])
             if name not in allowed:
                 errs.append(f"{where}: event '{name}' không có trong contract v{version}")
                 continue
@@ -164,7 +174,8 @@ def validate(lines, version, every, ticks_req):
             if dm:
                 errs.append(f"{where}: event {name} thiếu {dm}")
             if name == "game_over":
-                if data.get("result") not in ("won", "lost") or data.get("reason") not in ("all_lit", "dawn", "no_flames"):
+                reasons = ("dawn_survived", "dawn", "no_flames") if v12 else ("all_lit", "dawn", "no_flames")
+                if data.get("result") not in ("won", "lost") or data.get("reason") not in reasons:
                     errs.append(f"{where}: game_over result/reason sai: {data}")
             if name == "player_hit" and data.get("by") not in ("shade", "fall"):
                 errs.append(f"{where}: player_hit.by sai: {data.get('by')}")

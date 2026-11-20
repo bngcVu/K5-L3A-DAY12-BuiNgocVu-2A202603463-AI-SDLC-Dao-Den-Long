@@ -1,0 +1,26 @@
+{
+  "requirement": "P3 §3 Hết Ngọn Lửa luôn thua no_flames, kể cả ở tick bình minh",
+  "desc": "flames 1, 3 đèn sáng (đủ thắng), time_left 1 s (60 tick). S1 cách 4.98 m: sau 59 bước còn 1.047 m (>1), sau 60 bước 0.98 m (≤1) → hit đúng tick 60 → lost/no_flames, không phải dawn_survived",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 100,
+  "expect": {
+    "events": [
+      {
+        "name": "game_over",
+        "tick": 60,
+        "data": {
+          "result": "lost",
+          "reason": "no_flames"
+        },
+        "count": 1
+      }
+    ],
+    "end": {
+      "state": "lost",
+      "ticks": 60
+    }
+  }
+}

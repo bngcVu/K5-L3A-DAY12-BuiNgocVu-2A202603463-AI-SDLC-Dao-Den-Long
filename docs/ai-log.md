@@ -12,3 +12,11 @@
 - Token/chi phí: chưa đo chính xác; ước lượng thô ~250–300k token cho Phase 2 (viết lại sim ~480 dòng, client ~330 dòng, sinh scenario bằng một script Node). Tiết kiệm: sinh scenario bằng script thay vì viết tay từng file, không dùng subagent, một lần đọc spec.
 - Lỗi AI/test đã gặp: (1) hai scenario sai ở phía test (hit rơi đúng biên 1.0 m; giữ phím sau khi đáp bục) → phát hiện nhờ FAIL rồi tính lại từ ticket, không sửa mã; (2) `.gitignore` `skills/` từng nuốt `.claude/skills/` (Phase 1) → neo `/skills/`; (3) mơ hồ của ticket (điểm xuất phát Đêm 3, quy ước góc, kiểu `invuln`) → ghi `docs/spec-phase-2.md` mục B1–B20.
 - Chưa làm: đo FPS thật ≥ 30 ở 1280×720; kiểm tay âm thanh/cài đặt/menu trong trình duyệt thật.
+
+# Phase 3
+
+- Quy trình: đọc `docs/phase-3.md` → liệt kê luật bị THAY THẾ → viết 15 scenario `p3_*` + 5 unit test **trước** (đỏ) → ADR + CHANGELOG → sửa `sim.js` (bước 2/5/6/8/11) → mở rộng runner cho v1.2 → sửa/xóa test cũ có lý do → client (thanh dầu, mù màu, HUD) → ảnh chụp.
+- Token/chi phí: chưa đo chính xác; ước lượng thô ~150k token (tận dụng khung Phase 2, sửa bằng script Python thay vì viết lại file). Tiết kiệm: patch có assert thay vì đọc lại file lớn; sinh scenario bằng script Node.
+- Lỗi AI/quy trình đã gặp: (1) heredoc bash dài lại hỏng quoting trên Windows (lần 2) → quy tắc ghi vào AGENTS.md: ghi script bằng công cụ Write rồi chạy; (2) scenario `p3_pulse_on_draining_shade_scores_15` ban đầu đặt pulse sau khi bóng đã đổi `drain→chase` (Mây trong 6 m) → phát hiện khi tính tay thứ tự bước 7 trước bước 8, sửa trong test trước khi chạy; (3) `docs/` bị `.gitignore` chặn file mới → ghi tài liệu mới ở `adr/`, `spec/`.
+- Chưa làm: kiểm tay chế độ mù màu và nhấp nháy 1 Hz trong trình duyệt thật; đo FPS.
+

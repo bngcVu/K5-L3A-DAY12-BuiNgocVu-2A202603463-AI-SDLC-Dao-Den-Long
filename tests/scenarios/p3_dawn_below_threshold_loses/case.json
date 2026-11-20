@@ -1,0 +1,27 @@
+{
+  "requirement": "P3 §3 Hết giờ mà số đèn sáng dưới ngưỡng → thua dawn",
+  "desc": "Chỉ 2/5 đèn sáng (<3) khi hết giờ (120 tick) → game_over lost/dawn, điểm 0 (không thưởng bình minh)",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 200,
+  "expect": {
+    "events": [
+      {
+        "name": "game_over",
+        "tick": 120,
+        "data": {
+          "result": "lost",
+          "reason": "dawn"
+        },
+        "count": 1
+      }
+    ],
+    "end": {
+      "state": "lost",
+      "score": 0,
+      "ticks": 120
+    }
+  }
+}

@@ -5,7 +5,7 @@ const isNum = (x) => typeof x === 'number' && Number.isFinite(x);
 const isVec = (v, n) => Array.isArray(v) && v.length === n && v.every(isNum);
 const isInt0 = (x) => Number.isInteger(x) && x >= 0;
 const LANTERNS = { 1: 5, 2: 6, 3: 7 };
-const SHADE_STATES = ['spawning', 'wander', 'chase', 'recoil', 'stunned'];
+const SHADE_STATES = ['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain'];
 const DRIFTER_STATES = ['idle', 'chase', 'flee', 'removed'];
 
 export function validateInputs(doc) {
@@ -31,7 +31,7 @@ export function validateScenario(sc, night = 1) {
     const p = sc.player;
     if (typeof p !== 'object' || p === null) bad('scenario.player phải là object');
     if ('pos' in p && !isVec(p.pos, 3)) bad('scenario.player.pos phải là [x,y,z]');
-    for (const k of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
+    for (const k of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks', 'successful_lights']) {
       if (k in p && !isInt0(p[k])) bad(`scenario.player.${k} phải là số nguyên ≥ 0`);
     }
   }
@@ -47,6 +47,7 @@ export function validateScenario(sc, night = 1) {
       if (!s || !isVec(s.pos, 3)) bad(`scenario.shades[${i}].pos phải là [x,y,z]`);
       if ('id' in s && (typeof s.id !== 'string' || !s.id)) bad(`scenario.shades[${i}].id phải là chuỗi`);
       if ('state' in s && !SHADE_STATES.includes(s.state)) bad(`scenario.shades[${i}].state phải thuộc ${SHADE_STATES.join('/')}`);
+      if ('target_lantern_id' in s && !/^L[1-9]\d*$/.test(s.target_lantern_id ?? '')) bad(`scenario.shades[${i}].target_lantern_id phải là id đèn (L1..)`);
       if ('state_ticks_left' in s && !isInt0(s.state_ticks_left)) bad(`scenario.shades[${i}].state_ticks_left phải là số nguyên ≥ 0`);
     });
   }
@@ -72,6 +73,8 @@ export function validateScenario(sc, night = 1) {
     sc.lanterns.forEach((l, i) => {
       if (!l || typeof l.id !== 'string' || !/^L[1-9]\d*$/.test(l.id) || Number(l.id.slice(1)) > n) bad(`scenario.lanterns[${i}].id phải là L1..L${n} (Đêm ${night})`);
       if ('pos' in l && !isVec(l.pos, 3)) bad(`scenario.lanterns[${i}].pos phải là [x,y,z]`);
+      if ('fuel' in l && !(isNum(l.fuel) && l.fuel >= 0 && l.fuel <= 100)) bad(`scenario.lanterns[${i}].fuel phải là số trong [0,100]`);
+      if ('ever_lit' in l && typeof l.ever_lit !== 'boolean') bad(`scenario.lanterns[${i}].ever_lit phải là boolean`);
       if ('deposited' in l && !isInt0(l.deposited)) bad(`scenario.lanterns[${i}].deposited phải là số nguyên ≥ 0`);
       if ('lit' in l && typeof l.lit !== 'boolean') bad(`scenario.lanterns[${i}].lit phải là boolean`);
     });

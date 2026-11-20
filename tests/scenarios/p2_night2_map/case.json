@@ -1,6 +1,6 @@
 {
   "requirement": "P2 Đêm 2 Đảo Cau: 6 đèn theo bản đồ chuẩn, 330 s",
-  "desc": "Snapshot 0: L1 (0,0,20), L4 (70,0,20), L6 (53,0,-10); time_left 330; night 2",
+  "desc": "Snapshot 0: L1 (0,0,20), L4 (70,0,20), L6 (53,0,-10); time_left 270 (Ticket-03); night 2",
   "min_version": "1.1",
   "seed": 1,
   "night": 2,
@@ -16,7 +16,7 @@
       {
         "tick": 0,
         "path": "time_left_s",
-        "equals": 330
+        "equals": 270
       },
       {
         "tick": 0,

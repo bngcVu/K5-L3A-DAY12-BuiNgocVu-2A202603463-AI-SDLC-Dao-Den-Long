@@ -1,6 +1,6 @@
 {
   "requirement": "P2 Đêm 3 Đảo Chuông: 7 đèn theo bản đồ chuẩn, 360 s",
-  "desc": "Snapshot 0: L1 (0,6,6), L2 (18,3,10), L7 (-20,0,-35); time_left 360; night 3; 20 đom đóm lúc đầu",
+  "desc": "Snapshot 0: L1 (0,6,6), L2 (18,3,10), L7 (-20,0,-35); time_left 300 (Ticket-03); night 3; 20 đom đóm lúc đầu",
   "min_version": "1.1",
   "seed": 1,
   "night": 3,
@@ -16,7 +16,7 @@
       {
         "tick": 0,
         "path": "time_left_s",
-        "equals": 360
+        "equals": 300
       },
       {
         "tick": 0,

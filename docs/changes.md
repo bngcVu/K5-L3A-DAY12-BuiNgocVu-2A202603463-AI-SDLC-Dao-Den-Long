@@ -17,3 +17,13 @@
 | 2026-11-20 | `p1_shade_hit_loses_flame`: bóng cách 10.05 m, hit tick 136 | Tốc độ 4 m/s; 10 m làm hit rơi đúng biên ≤1.0 m nên phụ thuộc làm tròn số thực. Đổi test, không đổi mã |
 | 2026-11-20 | `p2_jump_pad_night2`: thả phím đi sau tick 2 | Lần đầu giữ phím sau khi đáp nên Mây đi ngược 1.6 m; lỗi ở test, mã đúng (đáp (51.145,0,6.774)) |
 | 2026-11-20 | `p1_pickup_mote`, `p1_deposit_lights_lantern`, `p1_lose_dawn`, `p1_lose_no_flames`, `contract_*`: giữ nguyên, vẫn đạt với số chuẩn | Hồi quy Phase 1 |
+| 2026-11-20 | Phase 3 (Ticket-03): `game.contract.json` lên v1.2 (+ khóa `fuel_*`, `relight_cost`, `win_ratio`, `drain_per_s`, `low_fuel_threshold`, `capacity_max`; Đêm 240/270/300 s; `per_mote` 5, `per_second_left` 0) | Ticket-03 §3, §5, §7. Quyết định: `adr/0001-den-can-dau-va-luat-thang.md` |
+| 2026-11-20 | **Xóa** `tests/scenarios/p1_win_all_lit` | Luật "thắp đủ đèn thì thắng ngay" bị Ticket-03 §3 **thay thế**; thay bằng `p3_no_early_win_all_lit` (đủ đèn không kết thúc Đêm) và `p3_dawn_survived_wins` |
+| 2026-11-20 | **Xóa** `tests/scenarios/p2_win_on_last_tick` | Thắng vì "đủ đèn kể cả đúng tick hết giờ" không còn (đổi thành thắng ở bình minh); ý "tick cuối" nay được kiểm bởi `p3_no_flames_beats_dawn_on_last_tick` |
+| 2026-11-20 | `p2_safe_zone_evicts_shade`: điểm mong đợi 200→150 | Điểm mới: +5/đom đóm nạp (50) + 100 thắp lần đầu |
+| 2026-11-20 | `p2_night2_map`, `p2_night3_map`: `time_left_s` 330→270, 360→300 | Ticket-03 §3: thời gian Đêm mới |
+| 2026-11-20 | `p2_pause_freezes_logic`: `time_left_s` 299.833→239.833 | Đêm 1 = 240 s (Ticket-03 §3) |
+| 2026-11-20 | `p2_full_night3_performance`: kết thúc ở tick 18000 (không phải 21600) | Đêm 3 = 300 s = 18.000 tick; vẫn chạy cấu hình 21.600 tick tối đa, kiểm `max_seconds: 30` |
+| 2026-11-20 | `tools/run_scenarios.py`: hiểu v1.2 (event `refuel`/`lantern_out`/`fuel_drain`, `lantern_lit.relight`, trường `fuel`/`ever_lit`/`relit_count`/`capacity`, trạng thái `drain`, lý do `dawn_survived`, bỏ `all_lit` từ 1.2) | Runner mẫu chỉ biết v1.0/v1.1 và sẽ báo sai mọi output v1.2. Không đổi cách kiểm `expect` hay tất định |
+| 2026-11-20 | Các `p1_*`, `p2_*`, `contract_*` còn lại giữ nguyên, vẫn đạt | Hồi quy Phase 1–2 |
+

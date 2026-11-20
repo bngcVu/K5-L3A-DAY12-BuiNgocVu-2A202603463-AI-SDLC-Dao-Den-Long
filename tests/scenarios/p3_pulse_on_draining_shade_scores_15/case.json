@@ -1,0 +1,35 @@
+{
+  "requirement": "P3 §2/§5 Tỏa Sáng làm drain → stunned; điểm +15 nếu nó đang drain (thường +5)",
+  "desc": "S1 drain tại đèn (0,0,10) fuel 20; Mây (0,0,6) mang 3: 3D tới tâm (0,0.8,6)→(0,1,10) ≈ 4.0 ≤ 5; pulse ở bước 0 (event tick 1, lúc đó S1 còn drain): stunned, +15 điểm, carried 0",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 20,
+  "expect": {
+    "events": [
+      {
+        "name": "pulse",
+        "tick": 1,
+        "data": {
+          "stunned_ids": [
+            "S1"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 20,
+        "path": "shades[id=S1].state",
+        "equals": "stunned"
+      },
+      {
+        "tick": 20,
+        "path": "score",
+        "equals": 15
+      }
+    ]
+  }
+}

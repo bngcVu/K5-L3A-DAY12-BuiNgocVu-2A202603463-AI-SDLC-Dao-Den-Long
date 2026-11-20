@@ -1,0 +1,18 @@
+{
+  "requirement": "P3 §2 drain → chase nếu Mây vào trong 6 m",
+  "desc": "S1 đang drain tại đèn L1 (0,0,10) fuel 20; người chơi cách 5 m (≤6) → chase ngay tick 1",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 10,
+  "expect": {
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "shades[id=S1].state",
+        "equals": "chase"
+      }
+    ]
+  }
+}

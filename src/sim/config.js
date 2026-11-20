@@ -1,4 +1,4 @@
-// Số liệu chuẩn Ticket-02 (Contract v1.1) — nguồn duy nhất.
+// Số liệu chuẩn Ticket-02 + Ticket-03 (Contract v1.2) — nguồn duy nhất.
 // TUNING phải khớp game.contract.json (có unit test kiểm).
 export const TUNING = {
   player_speed: 6,
@@ -9,9 +9,9 @@ export const TUNING = {
   interact_radius: 2,
   pulse_cost: 3,
   pulse_radius: 5,
-  night1_duration_s: 300,
-  night2_duration_s: 330,
-  night3_duration_s: 360,
+  night1_duration_s: 240,
+  night2_duration_s: 270,
+  night3_duration_s: 300,
   flames: 3,
   invuln_s: 1.5,
   hit_drop_ratio: 0.5,
@@ -25,7 +25,15 @@ export const TUNING = {
   dash_speed: 14,
   dash_duration_s: 0.2,
   dash_cooldown_s: 1.5,
-  score: { per_mote: 10, per_lantern: 100, per_stun: 5, per_second_left: 2, per_flame_left: 50 },
+  fuel_max: 100,
+  fuel_decay_per_s: 1.0,
+  fuel_per_mote: 10,
+  relight_cost: 5,
+  win_ratio: 0.6,
+  drain_per_s: 5,
+  low_fuel_threshold: 30,
+  capacity_max: 20,
+  score: { per_mote: 5, per_lantern: 100, per_stun: 5, per_second_left: 0, per_flame_left: 50 },
 };
 
 // Hằng số khác của ticket (không nằm trong tuning của contract)
@@ -76,4 +84,13 @@ export const WORLD = {
   wind_warn_ticks: 120,
   wind_push: 2,
   pad_radius: 1,
+  // Ticket-03
+  fuel_unit: 60, // dầu lưu theo đơn vị 1/60 (số nguyên) để không sai số số thực
+  drain_range: 2,
+  drain_chase_range: 6,
+  fuel_drain_log_ticks: 60,
+  capacity_step: 2,
+  score_relight: 40,
+  score_stun_drain_bonus: 10,
+  score_dawn_lantern: 50,
 };

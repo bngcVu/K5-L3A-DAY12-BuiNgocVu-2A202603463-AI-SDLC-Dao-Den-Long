@@ -1,0 +1,56 @@
+{
+  "requirement": "P3 §2 Bóng Mực wander tới đèn sáng fuel<30, ≤2 m → drain, hút 5/giây, cộng dồn với hao 1/giây, fuel_drain mỗi 60 tick, đèn hết dầu → lantern_out rồi shade về wander",
+  "desc": "L1 sáng fuel 20 (1200 đơn vị) tại (0,0,20); S1 (0,1,30.05) wander, người chơi ở xa (-30). Đi 8.05 m /(4/60) = 120.75 → drain từ tick 121. Hút bắt đầu trừ từ tick 122: 6 đơn vị/tick (1 hao + 5 hút). Tick 181 (drain 60 tick): fuel=(1200−121−6×60)/60=11.98→12.0 (fuel_drain). Hết dầu: 1079/6 → 180 tick → lantern_out tick 301. Sau đó S1 về wander",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 320,
+  "expect": {
+    "events": [
+      {
+        "name": "fuel_drain",
+        "tick": 181,
+        "data": {
+          "lantern_id": "L1",
+          "shade_id": "S1",
+          "fuel": 12
+        },
+        "count": 1
+      },
+      {
+        "name": "fuel_drain",
+        "tick": 241,
+        "count": 1
+      },
+      {
+        "name": "lantern_out",
+        "tick": 301,
+        "data": {
+          "lantern_id": "L1"
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "player_hit"
+    ],
+    "snapshots": [
+      {
+        "tick": 130,
+        "path": "shades[id=S1].state",
+        "equals": "drain"
+      },
+      {
+        "tick": 310,
+        "path": "shades[id=S1].state",
+        "equals": "wander"
+      },
+      {
+        "tick": 310,
+        "path": "lanterns[id=L1].lit",
+        "equals": false
+      }
+    ]
+  }
+}

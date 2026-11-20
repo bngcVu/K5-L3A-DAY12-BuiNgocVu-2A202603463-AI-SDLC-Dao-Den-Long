@@ -1,0 +1,35 @@
+{
+  "requirement": "P3 §1 Châm dầu chỉ trừ số đom đóm cần (ceil((100−fuel)/10))",
+  "desc": "fuel 95 (→94.967 sau 2 bước): (100−94.967)/10=0.503 → ceil 1 → used 1, fuel=min(100, 104.967)=100; carried 10→9; điểm 5",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 10,
+  "expect": {
+    "events": [
+      {
+        "name": "refuel",
+        "tick": 2,
+        "data": {
+          "lantern_id": "L1",
+          "amount": 1,
+          "fuel": 100
+        },
+        "count": 1
+      }
+    ],
+    "snapshots": [
+      {
+        "tick": 10,
+        "path": "player.carried",
+        "equals": 9
+      },
+      {
+        "tick": 10,
+        "path": "score",
+        "equals": 5
+      }
+    ]
+  }
+}

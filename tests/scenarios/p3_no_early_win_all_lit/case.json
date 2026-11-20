@@ -1,0 +1,27 @@
+{
+  "requirement": "P3 §3 Không còn thắng sớm: thắp đủ đèn không kết thúc Đêm",
+  "desc": "Cả 5 đèn sáng từ đầu, time_left 1 s (60 tick): không game_over trước tick 60; tại tick 60 won/dawn_survived; fuel cuối 99 → 5×(50+99)=745 + 150 = 895",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 100,
+  "expect": {
+    "events": [
+      {
+        "name": "game_over",
+        "tick": 60,
+        "data": {
+          "result": "won",
+          "reason": "dawn_survived"
+        },
+        "count": 1
+      }
+    ],
+    "end": {
+      "state": "won",
+      "score": 895,
+      "ticks": 60
+    }
+  }
+}

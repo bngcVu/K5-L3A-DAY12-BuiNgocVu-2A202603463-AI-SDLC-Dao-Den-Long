@@ -1,8 +1,9 @@
-// Logic game thuần, tất định (Contract v1.1). Không import render/DOM/âm thanh, không đồng hồ thật.
+// Logic game thuần, tất định (Contract v1.2). Không import render/DOM/âm thanh, không đồng hồ thật.
 // Thứ tự một tick (Ticket-02 "Thứ tự xử lý trong một tick"):
 //  1 input + pause   2 giảm bộ đếm   3 di chuyển Mây (nhảy, lướt, bục, gió) + rơi   4 nhặt đom đóm/bùa
 //  5 tương tác đèn   6 vùng an toàn   7 Tỏa Sáng   8 di chuyển Bóng Mực + Gió Lạc   9 chạm (Gió Lạc trước, rồi Bóng Mực theo id)
 //  10 sinh theo lịch   11 thắng/thua   (12 snapshot do bên gọi ghi)
+// Ticket-03: bước 2 trừ dầu (hao + bị hút) rồi đèn fuel<=0 tắt; bước 11 thắng khi hết giờ + đủ đèn (không thắng sớm).
 import { TUNING as T, WORLD as W } from './config.js';
 import { makeRng } from './rng.js';
 import { buildMap } from './maps.js';
@@ -10,6 +11,7 @@ import { buildMap } from './maps.js';
 const DT = 1 / W.tick_hz;
 const TAU = 2 * Math.PI;
 const r3 = (x) => Math.round(x * 1000) / 1000;
+const r1 = (x) => Math.round(x * 10) / 10;
 const rp = (p) => [r3(p[0]), r3(p[1]), r3(p[2])];
 const d2 = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
 const ticksOf = (s) => Math.round(s * W.tick_hz);
@@ -43,17 +45,23 @@ export class Sim {
       pos, vy: 0, vel: [0, 0, 0], grounded: false, fx: 0, fz: 1, launch: null,
       carried: pl.carried ?? 0, flames: pl.flames ?? T.flames,
       invuln: pl.invuln_ticks ?? 0, dashCd: pl.dash_cd_ticks ?? 0, dashTicks: 0, dashDx: 0, dashDz: 1,
-      pulseCd: pl.pulse_cd_ticks ?? 0, charm: pl.charm_ticks ?? 0, respawn: 0,
+      pulseCd: pl.pulse_cd_ticks ?? 0, charm: pl.charm_ticks ?? 0, respawn: 0, lights: pl.successful_lights ?? 0,
     };
     if (top !== null && pos[1] <= top + 1e-9) { pos[1] = top; this.player.grounded = true; }
 
-    this.lanterns = M.lanterns.map((p, i) => ({ id: `L${i + 1}`, pos: [...p], deposited: 0, lit: false }));
+    this.lanterns = M.lanterns.map((p, i) => ({ id: `L${i + 1}`, pos: [...p], deposited: 0, lit: false, fuel: 0, everLit: false, relit: 0 }));
     for (const u of sc.lanterns || []) {
       const L = this.lanterns.find((l) => l.id === u.id);
       if (u.pos) L.pos = [...u.pos];
       if (u.deposited !== undefined) L.deposited = u.deposited;
-      if (u.lit !== undefined) { L.lit = u.lit; if (u.lit && u.deposited === undefined) L.deposited = T.lantern_cost; }
-      if (L.deposited >= T.lantern_cost) L.lit = true;
+      if (u.ever_lit !== undefined) L.everLit = u.ever_lit;
+      if (u.relit_count !== undefined) L.relit = u.relit_count;
+      const lit = u.lit ?? (u.fuel !== undefined ? u.fuel > 0 : L.deposited >= this.lightCost(L));
+      if (lit) {
+        L.lit = true; L.fuel = (u.fuel ?? T.fuel_max) * W.fuel_unit;
+        if (u.ever_lit === undefined) L.everLit = true;
+        if (u.deposited === undefined) L.deposited = this.lightCost(L);
+      } else { L.lit = false; L.fuel = 0; }
     }
     this.leftTicks = ticksOf(sc.time_left_s ?? T[M.duration_key]);
 
@@ -79,7 +87,7 @@ export class Sim {
       }
     }
     if (sc.shades) {
-      for (const s of sc.shades) this.addShade(s.pos, s.id, s.state ?? 'wander', s.state_ticks_left);
+      for (const s of sc.shades) this.addShade(s.pos, s.id, s.state ?? 'wander', s.state_ticks_left, s.target_lantern_id ?? null);
     }
     if (sc.drifters) {
       for (const d of sc.drifters) {
@@ -99,11 +107,11 @@ export class Sim {
 
   addMote(x, y, z, kind, ttl) { this.motes.push({ id: `M${++this.moteN}`, pos: [x, y, z], kind, ttl }); }
 
-  addShade(pos, id, state = 'wander', ticksLeft) {
+  addShade(pos, id, state = 'wander', ticksLeft, target = null) {
     id = id ?? this.newShadeId();
     this.usedShadeIds.add(id);
     const t = this.map.top(pos[0], pos[2]) ?? 0, y = pos[1] ?? W.shade_y;
-    const s = { id, pos: [pos[0], y, pos[2]], yOff: y - t, state, ticks: 0, age: W.pulse_push_ticks, evict: 0, pdx: 1, pdz: 0, rdx: 1, rdz: 0, wdx: 1, wdz: 0, wTimer: 0 };
+    const s = { id, pos: [pos[0], y, pos[2]], yOff: y - t, state, ticks: 0, age: W.pulse_push_ticks, evict: 0, pdx: 1, pdz: 0, rdx: 1, rdz: 0, wdx: 1, wdz: 0, wTimer: 0, target, drainTicks: 0 };
     if (state === 'stunned') s.ticks = ticksLeft ?? W.shade_stun_ticks;
     if (state === 'recoil') s.ticks = ticksLeft ?? W.shade_recoil_ticks;
     this.shades.push(s);
@@ -115,7 +123,12 @@ export class Sim {
     return id;
   }
 
-  litZoneAt(x, z) { return this.lanterns.find((l) => l.lit && d2(x, z, l.pos[0], l.pos[2]) < T.safe_radius); }
+  lightCost(L) { return L.everLit ? T.relight_cost : T.lantern_cost; }
+  get capacity() { return Math.min(T.capacity_max, T.carry_capacity + W.capacity_step * this.player.lights); }
+  // Vùng an toàn chỉ còn khi đèn sáng và fuel >= ngưỡng (đúng 30 vẫn còn)
+  zoneActive(l) { return l.lit && l.fuel >= T.low_fuel_threshold * W.fuel_unit; }
+  isWeak(l) { return l.lit && l.fuel < T.low_fuel_threshold * W.fuel_unit; }
+  litZoneAt(x, z) { return this.lanterns.find((l) => this.zoneActive(l) && d2(x, z, l.pos[0], l.pos[2]) < T.safe_radius); }
 
   // Di chuyển ngang có trượt theo vật cản; ok(x,z) quyết định ô có đi vào được không
   slide(pos, dx, dz, ok) {
@@ -132,7 +145,7 @@ export class Sim {
     const moved = this.slide(s.pos, dx, dz, ok);
     if (moved) s.pos[1] = (this.map.top(s.pos[0], s.pos[2]) ?? g) + s.yOff;
     for (const l of this.lanterns) { // vùng an toàn: chặn ở mép
-      if (!l.lit) continue;
+      if (!this.zoneActive(l)) continue;
       const ex = s.pos[0] - l.pos[0], ez = s.pos[2] - l.pos[2], d = Math.hypot(ex, ez);
       if (d < T.safe_radius) {
         const ux = d > 1e-9 ? ex / d : 1, uz = d > 1e-9 ? ez / d : 0;
@@ -141,6 +154,15 @@ export class Sim {
     }
     return moved;
   }
+
+  wanderTarget(s) {
+    const near = (list) => list.reduce((b, l) => (!b || d2(s.pos[0], s.pos[2], l.pos[0], l.pos[2]) < d2(s.pos[0], s.pos[2], b.pos[0], b.pos[2]) ? l : b), null);
+    const forced = s.target && this.lanterns.find((l) => l.id === s.target);
+    if (forced && this.isWeak(forced)) return forced;
+    return near(this.lanterns.filter((l) => this.isWeak(l))) ?? near(this.lanterns.filter((l) => !l.lit));
+  }
+
+  shadeObj(id) { return this.shades.find((x) => x.id === id); }
 
   respawnPlayer() {
     const P = this.player;
@@ -222,6 +244,18 @@ export class Sim {
     this.motes = this.motes.filter((m) => m.ttl === null || --m.ttl > 0);
     for (const s of this.shades) if (s.state === 'stunned' && --s.ticks <= 0) s.state = 'wander';
     if (P.respawn > 0 && --P.respawn === 0) this.respawnPlayer();
+    // Ticket-03: trừ dầu (hao 1/giây + bị hút), rồi đèn fuel <= 0 tắt
+    for (const l of this.lanterns) if (l.lit) l.fuel -= T.fuel_decay_per_s;
+    for (const sh of this.shades) {
+      if (sh.state !== 'drain') continue;
+      const L = this.lanterns.find((l) => l.id === sh.target);
+      if (!L || !L.lit) continue;
+      L.fuel -= T.drain_per_s;
+      if (++sh.drainTicks % W.fuel_drain_log_ticks === 0) emit('fuel_drain', { lantern_id: L.id, shade_id: sh.id, fuel: r1(Math.max(0, L.fuel) / W.fuel_unit) });
+    }
+    for (const l of this.lanterns) {
+      if (l.lit && l.fuel <= 0) { l.lit = false; l.fuel = 0; l.deposited = 0; emit('lantern_out', { lantern_id: l.id }); }
+    }
     let alive = P.respawn === 0;
     if (this.windOn) {
       const m = n % W.wind_every;
@@ -236,7 +270,7 @@ export class Sim {
     // 4 nhặt đom đóm, bùa
     if (alive) {
       const near = (p) => d2(p[0], p[2], P.pos[0], P.pos[2]) <= T.pickup_radius && Math.abs(P.pos[1] - p[1]) <= W.pickup_dy;
-      for (let i = 0; i < this.motes.length && P.carried < T.carry_capacity;) {
+      for (let i = 0; i < this.motes.length && P.carried < this.capacity;) {
         if (near(this.motes[i].pos)) { this.motes.splice(i, 1); P.carried++; emit('mote_picked', { carried: P.carried }); } else i++;
       }
       for (const c of this.charms) {
@@ -247,18 +281,34 @@ export class Sim {
       }
     }
 
-    // 5 tương tác đèn
+    // 5 tương tác đèn: nạp đèn chưa sáng (10, thắp lại 5) hoặc châm dầu đèn đang sáng chưa đầy
     if (alive && interact && P.carried > 0) {
       let best = null;
       for (const l of this.lanterns) {
         const d = d2(l.pos[0], l.pos[2], P.pos[0], P.pos[2]);
-        if (!l.lit && d <= T.interact_radius && (!best || d < best.d)) best = { l, d };
+        const receives = !l.lit || l.fuel < T.fuel_max * W.fuel_unit;
+        if (receives && d <= T.interact_radius && (!best || d < best.d)) best = { l, d };
       }
       if (best) {
-        const L = best.l, amount = Math.min(P.carried, T.lantern_cost - L.deposited);
-        P.carried -= amount; L.deposited += amount; this.score += amount * T.score.per_mote;
-        emit('deposit', { lantern_id: L.id, amount, deposited: L.deposited });
-        if (L.deposited >= T.lantern_cost) { L.lit = true; this.score += T.score.per_lantern; emit('lantern_lit', { lantern_id: L.id }); }
+        const L = best.l;
+        if (L.lit) {
+          const used = Math.min(P.carried, Math.ceil((T.fuel_max * W.fuel_unit - L.fuel) / (T.fuel_per_mote * W.fuel_unit)));
+          P.carried -= used;
+          L.fuel = Math.min(T.fuel_max * W.fuel_unit, L.fuel + T.fuel_per_mote * W.fuel_unit * used);
+          this.score += used * T.score.per_mote;
+          emit('refuel', { lantern_id: L.id, amount: used, fuel: r1(L.fuel / W.fuel_unit) });
+        } else {
+          const cost = this.lightCost(L), amount = Math.min(P.carried, cost - L.deposited);
+          P.carried -= amount; L.deposited += amount; this.score += amount * T.score.per_mote;
+          emit('deposit', { lantern_id: L.id, amount, deposited: L.deposited });
+          if (L.deposited >= cost) {
+            const relight = L.everLit;
+            L.lit = true; L.fuel = T.fuel_max * W.fuel_unit; L.everLit = true; P.lights++;
+            if (relight) L.relit++;
+            this.score += relight ? W.score_relight : T.score.per_lantern;
+            emit('lantern_lit', { lantern_id: L.id, relight });
+          }
+        }
       }
     }
 
@@ -285,8 +335,9 @@ export class Sim {
         if (dist3(s.pos) > T.pulse_radius) continue;
         const ex = s.pos[0] - P.pos[0], ez = s.pos[2] - P.pos[2], d = Math.hypot(ex, ez);
         s.pdx = d > 1e-9 ? ex / d : 1; s.pdz = d > 1e-9 ? ez / d : 0;
-        s.state = 'stunned'; s.ticks = W.shade_stun_ticks; s.age = 0;
-        ids.push(s.id); this.score += T.score.per_stun;
+        this.score += T.score.per_stun + (s.state === 'drain' ? W.score_stun_drain_bonus : 0);
+        s.state = 'stunned'; s.ticks = W.shade_stun_ticks; s.age = 0; s.target = null; s.drainTicks = 0;
+        ids.push(s.id);
       }
       emit('pulse', { stunned_ids: ids });
       for (const d of this.drifters) {
@@ -305,6 +356,12 @@ export class Sim {
     const px = P.pos[0], pz = P.pos[2];
     const speed = M.shadeSpeed;
     for (const s of this.shades) {
+      if (s.state === 'drain') { // thoát drain: Mây vào 6 m → chase; đèn tắt / fuel ≥ 30 / cách > 2 m → wander
+        const L = this.lanterns.find((l) => l.id === s.target);
+        if (alive && d2(s.pos[0], s.pos[2], px, pz) <= W.drain_chase_range) { s.state = 'chase'; s.target = null; s.drainTicks = 0; }
+        else if (!L || !this.isWeak(L) || d2(s.pos[0], s.pos[2], L.pos[0], L.pos[2]) > W.drain_range) { s.state = 'wander'; s.target = null; s.drainTicks = 0; }
+        else continue;
+      }
       if (s.evict > 0) continue;
       if (s.state === 'stunned') {
         if (s.age < W.pulse_push_ticks) { const m = T.pulse_push_m / W.pulse_push_ticks; this.stepShade(s, s.pdx * m, s.pdz * m); }
@@ -318,14 +375,26 @@ export class Sim {
       }
       const d = alive ? d2(s.pos[0], s.pos[2], px, pz) : Infinity;
       if (s.state === 'spawning') s.state = 'wander';
-      if (s.state === 'wander' && d <= W.shade_detect_m) s.state = 'chase';
+      if (s.state === 'wander' && d <= W.shade_detect_m) { s.state = 'chase'; s.target = null; }
       else if (s.state === 'chase' && d > W.shade_lose_m) s.state = 'wander';
       if (s.state === 'chase') {
         const m = Math.min(speed * DT, d);
         if (d > 1e-9) this.stepShade(s, ((px - s.pos[0]) / d) * m, ((pz - s.pos[2]) / d) * m);
       } else {
-        if (--s.wTimer <= 0) { const a = this.rng() * TAU; s.wdx = Math.cos(a); s.wdz = Math.sin(a); s.wTimer = 120 + Math.floor(this.rng() * 120); }
-        if (!this.stepShade(s, s.wdx * W.shade_wander_speed * DT, s.wdz * W.shade_wander_speed * DT)) s.wTimer = 0;
+        const L = this.wanderTarget(s);
+        if (L) { // wander có mục tiêu: đèn yếu gần nhất, không có thì đèn tắt gần nhất
+          const lx = L.pos[0], lz = L.pos[2];
+          let dl = d2(s.pos[0], s.pos[2], lx, lz);
+          if (dl > W.drain_range) {
+            const m = Math.min(speed * DT, dl - W.drain_range + 1e-9);
+            this.stepShade(s, ((lx - s.pos[0]) / dl) * m, ((lz - s.pos[2]) / dl) * m);
+            dl = d2(s.pos[0], s.pos[2], lx, lz);
+          }
+          if (this.isWeak(L) && dl <= W.drain_range) { s.state = 'drain'; s.target = L.id; s.drainTicks = 0; }
+        } else {
+          if (--s.wTimer <= 0) { const a = this.rng() * TAU; s.wdx = Math.cos(a); s.wdz = Math.sin(a); s.wTimer = 120 + Math.floor(this.rng() * 120); }
+          if (!this.stepShade(s, s.wdx * W.shade_wander_speed * DT, s.wdz * W.shade_wander_speed * DT)) s.wTimer = 0;
+        }
       }
     }
     for (const dr of this.drifters) {
@@ -406,13 +475,17 @@ export class Sim {
       this.drifters.push({ id: `D${++this.driftN}`, pos: [p[0], W.drifter_y, p[2]], state: 'idle', stolen: 0, stole: false, fleeTicks: W.drifter_flee_ticks, wdx: 1, wdz: 0, wTimer: 0 });
     }
 
-    // 11 thắng / thua
+    // 11 thắng / thua (Ticket-03): hết Ngọn Lửa luôn thua trước; thắng chỉ khi hết giờ + đủ đèn sáng
     if (P.flames <= 0) return this.finish(ev, k, 'lost', 'no_flames');
-    if (this.lanterns.every((l) => l.lit)) {
-      this.score += Math.floor(Math.max(0, this.leftTicks - n) / W.tick_hz) * T.score.per_second_left + P.flames * T.score.per_flame_left;
-      return this.finish(ev, k, 'won', 'all_lit');
+    if (this.leftTicks - n <= 0) {
+      const lit = this.lanterns.filter((l) => l.lit);
+      if (lit.length >= Math.ceil(T.win_ratio * this.lanterns.length - 1e-9)) {
+        for (const l of lit) this.score += W.score_dawn_lantern + Math.floor(l.fuel / W.fuel_unit);
+        this.score += P.flames * T.score.per_flame_left;
+        return this.finish(ev, k, 'won', 'dawn_survived');
+      }
+      return this.finish(ev, k, 'lost', 'dawn');
     }
-    if (this.leftTicks - n <= 0) return this.finish(ev, k, 'lost', 'dawn');
     return ev;
   }
 
@@ -430,10 +503,10 @@ export class Sim {
       time_left_s: r3((this.leftTicks - this.simTick) / W.tick_hz), score: this.score,
       wind: { active: this.windActive, dir_deg: this.windActive || this.windWarn ? this.windDir : 0 },
       player: {
-        pos: rp(P.pos), vel: rp(P.vel), grounded: P.grounded, flames: P.flames, carried: P.carried, invuln: P.invuln > 0,
+        pos: rp(P.pos), vel: rp(P.vel), grounded: P.grounded, flames: P.flames, carried: P.carried, capacity: this.capacity, invuln: P.invuln > 0,
         dash_cd_s: r3(P.dashCd / W.tick_hz), pulse_cd_s: r3(P.pulseCd / W.tick_hz), charm_s: r3(P.charm / W.tick_hz),
       },
-      lanterns: this.lanterns.map((l) => ({ id: l.id, pos: rp(l.pos), lit: l.lit, deposited: l.deposited })),
+      lanterns: this.lanterns.map((l) => ({ id: l.id, pos: rp(l.pos), lit: l.lit, fuel: r1(l.fuel / W.fuel_unit), ever_lit: l.everLit, relit_count: l.relit, deposited: l.deposited })),
       shades: this.shades.map((s) => ({ id: s.id, pos: rp(s.pos), state: s.state })),
       motes_active: this.motes.length,
       motes: this.motes.map((m) => ({ id: m.id, pos: rp(m.pos), kind: m.kind, ttl_s: m.ttl === null ? null : r3(m.ttl / W.tick_hz) })),

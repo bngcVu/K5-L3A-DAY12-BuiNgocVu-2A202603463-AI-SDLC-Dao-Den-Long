@@ -1,0 +1,27 @@
+{
+  "requirement": "P3 §3/§5 Thắng khi còn sống lúc bình minh và đủ ngưỡng đèn sáng; điểm bình minh +50+floor(fuel) mỗi đèn, +50 mỗi Ngọn Lửa",
+  "desc": "Đêm 1 cần ceil(0.6×5)=3 đèn. L1..L3 sáng, time_left 2 s (120 tick): fuel cuối 100−2=98.0; điểm = 3×(50+98)=444 + 3 Ngọn Lửa×50=150 = 594; game_over won/dawn_survived ở tick 120",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 200,
+  "expect": {
+    "events": [
+      {
+        "name": "game_over",
+        "tick": 120,
+        "data": {
+          "result": "won",
+          "reason": "dawn_survived"
+        },
+        "count": 1
+      }
+    ],
+    "end": {
+      "state": "won",
+      "score": 594,
+      "ticks": 120
+    }
+  }
+}

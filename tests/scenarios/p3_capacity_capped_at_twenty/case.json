@@ -1,0 +1,18 @@
+{
+  "requirement": "P3 §4 Sức chứa tối đa 20",
+  "desc": "successful_lights=9 → 10+18=28 bị chặn ở capacity_max=20",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 1,
+  "expect": {
+    "snapshots": [
+      {
+        "tick": 0,
+        "path": "player.capacity",
+        "equals": 20
+      }
+    ]
+  }
+}

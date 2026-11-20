@@ -1,0 +1,37 @@
+{
+  "requirement": "P3 §2 Châm dầu lên ≥30 khi có Bóng Mực trong 6 m → đẩy ra mép trong ≤30 tick, không sát thương",
+  "desc": "L1 sáng fuel 20 (không vùng an toàn), S1 cách đèn 3 m, Mây tại đèn mang 2: châm +20 → 39.97 ≥ 30 → vùng an toàn trở lại, S1 bị đẩy tới mép 6 m (x=6) và không gây player_hit",
+  "min_version": "1.2",
+  "seed": 1,
+  "night": 1,
+  "snapshot_every": 10,
+  "ticks": 60,
+  "expect": {
+    "events": [
+      {
+        "name": "refuel",
+        "tick": 2,
+        "data": {
+          "lantern_id": "L1",
+          "amount": 2
+        },
+        "count": 1
+      }
+    ],
+    "no_events": [
+      "player_hit"
+    ],
+    "snapshots": [
+      {
+        "tick": 40,
+        "path": "shades[id=S1].pos",
+        "equals": [
+          6,
+          1,
+          10
+        ],
+        "tol": 0.1
+      }
+    ]
+  }
+}

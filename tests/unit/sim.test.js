@@ -11,9 +11,9 @@ const OFF = { random_motes: false, random_shades: false, random_drifters: false,
 const run = (sim, n, input = {}) => { for (let i = 0; i < n; i++) sim.step(input); return sim; };
 const near = (a, b, tol = 1e-6) => assert.ok(Math.abs(a - b) <= tol, `${a} ≠ ${b} (±${tol})`);
 
-test('config TUNING khớp tuning trong game.contract.json và contract_version là 1.1', () => {
+test('config TUNING khớp tuning trong game.contract.json và contract_version là 1.2', () => {
   assert.deepEqual(TUNING, contract.tuning);
-  assert.equal(contract.contract_version, '1.1');
+  assert.equal(contract.contract_version, '1.2');
 });
 
 test('rng cùng seed cùng chuỗi, khác seed khác chuỗi', () => {
@@ -115,4 +115,41 @@ test('gió Đêm 3: đẩy 2 m/s trong 5 s (10 m)', () => {
   run(s, 301);
   const p1 = s.snapshot().player.pos;
   near(Math.hypot(p1[0] - p0[0], p1[2] - p0[2]), 10, 0.2);
+});
+
+test('v1.2: đèn có fuel/ever_lit/relit_count, player có capacity; Đêm dài 240/270/300 s', () => {
+  const sn = new Sim({ seed: 1 }).snapshot();
+  assert.deepEqual(Object.keys(sn.lanterns[0]).sort(), ['deposited', 'ever_lit', 'fuel', 'id', 'lit', 'pos', 'relit_count']);
+  assert.equal(sn.player.capacity, 10);
+  assert.deepEqual([1, 2, 3].map((n) => new Sim({ seed: 1, night: n }).snapshot().time_left_s), [240, 270, 300]);
+});
+
+test('v1.2: hao dầu chính xác 1/60 mỗi tick (không sai số) và hết dầu thì tắt đúng tick', () => {
+  const s = new Sim({ seed: 1, scenario: { ...OFF, lanterns: [{ id: 'L1', lit: true, fuel: 1 }] } });
+  run(s, 59);
+  assert.equal(s.lanterns[0].lit, true);
+  assert.equal(s.lanterns[0].fuel, 1);
+  const ev = s.step({});
+  assert.equal(ev.some((e) => e.name === 'lantern_out'), true);
+  assert.equal(s.lanterns[0].lit, false);
+  assert.equal(s.lanterns[0].everLit, true);
+});
+
+test('v1.2: sức chứa 10 + 2 × lần thắp, tối đa 20', () => {
+  const cap = (n) => new Sim({ seed: 1, scenario: { ...OFF, player: { successful_lights: n } } }).snapshot().player.capacity;
+  assert.deepEqual([0, 1, 5, 6, 12].map(cap), [10, 12, 20, 20, 20]);
+});
+
+test('v1.2: thắp lần đầu cần 10, thắp lại (ever_lit) chỉ 5; đèn đã sáng nhận dầu chứ không bị bỏ qua', () => {
+  const s = new Sim({ seed: 1, scenario: { ...OFF, player: { carried: 10 }, lanterns: [{ id: 'L1', pos: [0, 0, 1], ever_lit: true, lit: false }, { id: 'L2', pos: [0, 0, -1.5] }] } });
+  const ev = s.step({ interact: true });
+  assert.ok(ev.some((e) => e.name === 'lantern_lit' && e.data.relight === true && e.data.lantern_id === 'L1'));
+  s.step({ interact: false });
+  const ev2 = s.step({ interact: true });
+  assert.ok(ev2.some((e) => e.name === 'refuel' && e.data.lantern_id === 'L1'), 'đèn gần nhất đã sáng nhưng chưa đầy dầu vẫn nhận');
+});
+
+test('v1.2: thắng chỉ khi hết giờ và đủ ceil(0.6 × tổng) đèn: 3/5, 4/6, 5/7', () => {
+  const need = (night) => Math.ceil(0.6 * buildMap(night).lanterns.length);
+  assert.deepEqual([1, 2, 3].map(need), [3, 4, 5]);
 });
