@@ -11,9 +11,9 @@ const OFF = { random_motes: false, random_shades: false, random_drifters: false,
 const run = (sim, n, input = {}) => { for (let i = 0; i < n; i++) sim.step(input); return sim; };
 const near = (a, b, tol = 1e-6) => assert.ok(Math.abs(a - b) <= tol, `${a} ≠ ${b} (±${tol})`);
 
-test('config TUNING khớp tuning trong game.contract.json và contract_version là 1.2', () => {
+test('config TUNING khớp tuning trong game.contract.json và contract_version là 1.3', () => {
   assert.deepEqual(TUNING, contract.tuning);
-  assert.equal(contract.contract_version, '1.2');
+  assert.equal(contract.contract_version, '1.3');
 });
 
 test('rng cùng seed cùng chuỗi, khác seed khác chuỗi', () => {

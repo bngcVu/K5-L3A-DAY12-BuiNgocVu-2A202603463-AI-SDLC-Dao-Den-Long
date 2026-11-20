@@ -8,7 +8,12 @@
     "start": "node server.js",
     "headless": "node src/headless.js",
     "test": "node --test tests/unit/*.test.js",
-    "check": "bash scripts/check.sh"
+    "check": "bash scripts/check.sh",
+    "bench": "node bench/bench.js --seed 42 --duration 30 --out bench.json",
+    "soak": "node src/soak.js --seed 7 --nights 10 --out soak.json",
+    "build:web": "node scripts/build-web.mjs"
   },
-  "dependencies": { "three": "0.160.0" }
+  "dependencies": {
+    "three": "0.160.0"
+  }
 }

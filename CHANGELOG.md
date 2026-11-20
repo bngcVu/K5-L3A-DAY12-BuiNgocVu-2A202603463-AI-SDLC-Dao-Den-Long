@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.0.0 — Phase 4 "Bình minh" (Contract v1.3)
+
+Không có breaking change về luật hay đầu ra headless (Phase 1–3 giữ nguyên; `check.sh` 46 scenario vẫn đạt). Thay đổi lệnh: `run_cmd` là `node server.js` (để truyền `--export-leaderboard`).
+
+### Thêm
+- **Benchmark** `node bench/bench.js --seed 42 --duration 30 --out bench.json`: cảnh chuẩn 1280×720 (200 Bóng Mực `wander`, 100 đom đóm, L1–L3 sáng), camera bay vòng, khởi động 3 s, số liệu `avg_fps`, `p1_low_fps`, `frame_ms_p95`, `frames`, `load_ms`, `peak_mem_mb`, `vsync_off`, `renderer`, `os`. Sim có chế độ `bench` (tắt sinh thêm, sát thương, nhặt, hao dầu, kết thúc Đêm).
+- **Soak test** `node src/soak.js --seed 7 --nights 10 --out soak.json`: 10 Đêm trong một tiến trình, input ngẫu nhiên theo seed, báo `crashes`, `mem_start_mb`, `mem_end_mb`.
+- **Bảng xếp hạng cục bộ** top 10 (lưu `data/leaderboard.json`, màn hình trong menu, nhập tên sau Bình Minh hoặc khi thua) và `node server.js --export-leaderboard out.json`.
+- **Dễ tiếp cận:** đổi phím (báo trùng, khôi phục mặc định, lưu), phụ đề / mũi tên chỉ hướng Bóng Mực mới, gió sắp thổi, đếm ngược 10 s, đèn sắp cạn dầu; giảm chuyển động; chữ ≥ 18 px và chữ lớn ×1.25.
+- **Đóng gói:** `LICENSE` (MIT), `CREDITS.md`, `Dockerfile`, `npm run build:web` (web tĩnh), hướng dẫn Release `release/RELEASE.md`, retro `retro/retro.md`.
+- `game.contract.json` v1.3: thêm `bench_cmd`, `soak_cmd`.
+
+### Thay đổi
+- Client: dùng chung hình học/vật liệu cho Bóng Mực và đom đóm (hiệu năng), gom mọi chữ UI về ≥ 18 px, bỏ dòng hướng dẫn phím cố định (hiện trong màn giới thiệu và tạm dừng theo phím đang gán).
+
+### Test
+- 8 unit test mới (`tests/unit/phase4.test.js`): tên/bảng xếp hạng, cảnh bench, thống kê khung hình, soak, API bảng xếp hạng + xuất. Tổng 27 unit test, 46 scenario.
+
 ## Phase 3 — Ticket-03 "Đèn cạn dầu" (Contract v1.2)
 
 ### ⚠ Thay đổi phá vỡ tương thích (breaking changes)

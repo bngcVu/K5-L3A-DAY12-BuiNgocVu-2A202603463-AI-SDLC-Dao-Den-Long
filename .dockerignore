@@ -1,0 +1,13 @@
+node_modules
+.git
+.claude
+.github
+evidence
+tests
+tools
+bench
+docs
+skills
+data
+dist
+*.md

@@ -1,10 +1,11 @@
 # AGENTS.md — Đảo Đèn Lồng
 
-Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có chế độ headless theo Test Contract (đang dùng: **v1.2** từ Phase 3, cập nhật khi đổi phase).
+Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có chế độ headless theo Test Contract (đang dùng: **v1.3** từ Phase 4, cập nhật khi đổi phase).
 
 ## Lệnh
 - Build: `npm install`
-- Chạy game: `npm start` (http://localhost:8080)
+- Chạy game: `npm start` (http://localhost:8080) · Xuất bảng xếp hạng: `node server.js --export-leaderboard out.json`
+- Benchmark: `node bench/bench.js --seed 42 --duration 30 --out bench.json` (cần Chrome) · Soak: `node src/soak.js --seed 7 --nights 10 --out soak.json`
 - Headless: `node src/headless.js --seed 1 --night 1|2|3 --ticks 600 --out out.jsonl`
 - Unit test: `npm test`
 - **Kiểm chứng toàn bộ (bắt buộc trước khi báo xong):** `./scripts/check.sh`
@@ -15,6 +16,7 @@ Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có ch�
 - Bước tick theo đúng 12 bước ghi ở đầu `src/sim/sim.js` (khớp Ticket-02). Bản đồ ở `src/sim/maps.js`; mỗi Đêm là một `Sim` mới. dt cố định 1/60, không dùng đồng hồ thật trong logic.
 - Mọi ngẫu nhiên đi qua 1 RNG có seed (`src/sim/rng.js`); id sinh theo thứ tự (S1, S2…). Không `Math.random`/`Date` trong `src/sim`.
 - Số liệu nằm ở `src/sim/config.js`, phải khớp `tuning` trong `game.contract.json` (unit test kiểm).
+- `bench`/`soak`/bảng xếp hạng không được đổi luật hay đầu ra headless: cờ `bench` của `Sim` chỉ tắt tính năng, không thêm hành vi mới.
 - Phần sáng tạo thêm: chỉ ở `web/`, tắt khi headless, không đổi output contract.
 
 ## Quy tắc làm việc
@@ -34,3 +36,5 @@ Game 3D (Three.js), logic tất định 60 tick/giây trong `src/sim/`, có ch�
 - Ticket **thay thế** luật cũ: viết ADR + CHANGELOG (mục breaking) trước, rồi sửa/xóa test cũ kèm lý do trong `docs/changes.md`; không để test cũ pass nhờ giữ luật cũ.
 - Dầu/đếm tick: dùng số nguyên đơn vị 1/60, chỉ làm tròn khi xuất; đừng cộng 1/60 dạng số thực.
 - Runner mẫu không biết contract mới: khi `contract_version` tăng, mở rộng `tools/run_scenarios.py` (và ghi `docs/changes.md`) trước khi chạy `check.sh`.
+- Số đo hiệu năng/bộ nhớ: chạy lặp vài lần và đo heap riêng trước khi tin một con số (soak lần đầu RSS lạnh ra 1.15× sát ngưỡng 1.2×; nguyên nhân là JIT chứ không phải rò rỉ).
+- Phần giao diện không có test tự động: ghi "CHƯA KIỂM TAY" trong `spec/phase-N.md` thay vì tuyên bố đạt.

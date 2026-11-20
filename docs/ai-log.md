@@ -20,3 +20,10 @@
 - Lỗi AI/quy trình đã gặp: (1) heredoc bash dài lại hỏng quoting trên Windows (lần 2) → quy tắc ghi vào AGENTS.md: ghi script bằng công cụ Write rồi chạy; (2) scenario `p3_pulse_on_draining_shade_scores_15` ban đầu đặt pulse sau khi bóng đã đổi `drain→chase` (Mây trong 6 m) → phát hiện khi tính tay thứ tự bước 7 trước bước 8, sửa trong test trước khi chạy; (3) `docs/` bị `.gitignore` chặn file mới → ghi tài liệu mới ở `adr/`, `spec/`.
 - Chưa làm: kiểm tay chế độ mù màu và nhấp nháy 1 Hz trong trình duyệt thật; đo FPS.
 
+# Phase 4
+
+- Quy trình: đọc `docs/phase-4.md` → viết 8 unit test **trước** (đỏ: thiếu `leaderboard`, `soak`, `bench-scene`, `bench-stats`) → module thuần + cờ `bench` → soak (đo, chỉnh khởi động nóng) → server API + `--export-leaderboard` → `bench/bench.js` (Chrome qua dòng lệnh) → viết lại `web/main.js` + `index.html` (tiếp cận, đổi phím, bảng xếp hạng, bench) → chạy bench/soak thật → LICENSE/CREDITS/Docker/README/retro.
+- Token/chi phí: chưa đo chính xác; ước lượng thô ~300–350k token (viết lại client ~500 dòng là khoản lớn nhất).
+- Lỗi AI/test: (1) Σdt sai trong test thống kê (90 thay vì 140) → unit đỏ, sửa test; (2) soak RSS lạnh 1.15× sát ngưỡng → chạy lặp, đo heap, thêm khởi động nóng; (3) heredoc quoting hỏng thêm lần nữa → Write + script.
+- Chưa làm: kiểm tay giao diện mới (đổi phím, nhập tên, giảm chuyển động…), tạo Release/video, dựng thử Docker.
+

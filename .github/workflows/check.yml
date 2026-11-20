@@ -14,6 +14,8 @@ jobs:
         run: bash -c "$(python3 -c 'import json;print(json.load(open("game.contract.json"))["build_cmd"])')"
       - name: Unit test + scenario + tất định
         run: ./scripts/check.sh --label ci
+      - name: Soak test (10 Đêm, một tiến trình)
+        run: node src/soak.js --seed 7 --nights 10 --out evidence/ci/soak.json
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: evidence-ci, path: evidence/ci/ }

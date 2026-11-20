@@ -27,7 +27,9 @@ export function moveDir(move, yawDeg) {
 }
 
 export class Sim {
-  constructor({ seed = 1, night = 1, scenario = {} } = {}) {
+  // bench: cảnh benchmark (Ticket-04): tắt sinh thêm, sát thương, nhặt, hao dầu, kết thúc Đêm; Bóng Mực chỉ wander ngẫu nhiên
+  constructor({ seed = 1, night = 1, scenario = {}, bench = false } = {}) {
+    this.bench = bench;
     this.rng = makeRng(seed);
     this.night = night;
     this.map = buildMap(night);
@@ -157,6 +159,7 @@ export class Sim {
 
   wanderTarget(s) {
     const near = (list) => list.reduce((b, l) => (!b || d2(s.pos[0], s.pos[2], l.pos[0], l.pos[2]) < d2(s.pos[0], s.pos[2], b.pos[0], b.pos[2]) ? l : b), null);
+    if (this.bench) return null; // benchmark: lang thang ngẫu nhiên, rải đều trên đảo
     const forced = s.target && this.lanterns.find((l) => l.id === s.target);
     if (forced && this.isWeak(forced)) return forced;
     return near(this.lanterns.filter((l) => this.isWeak(l))) ?? near(this.lanterns.filter((l) => !l.lit));
@@ -245,9 +248,9 @@ export class Sim {
     for (const s of this.shades) if (s.state === 'stunned' && --s.ticks <= 0) s.state = 'wander';
     if (P.respawn > 0 && --P.respawn === 0) this.respawnPlayer();
     // Ticket-03: trừ dầu (hao 1/giây + bị hút), rồi đèn fuel <= 0 tắt
-    for (const l of this.lanterns) if (l.lit) l.fuel -= T.fuel_decay_per_s;
+    for (const l of this.lanterns) if (l.lit && !this.bench) l.fuel -= T.fuel_decay_per_s;
     for (const sh of this.shades) {
-      if (sh.state !== 'drain') continue;
+      if (sh.state !== 'drain' || this.bench) continue;
       const L = this.lanterns.find((l) => l.id === sh.target);
       if (!L || !L.lit) continue;
       L.fuel -= T.drain_per_s;
@@ -268,7 +271,7 @@ export class Sim {
     if (alive) { this.movePlayer(input, jump, dash, emit); alive = P.respawn === 0; }
 
     // 4 nhặt đom đóm, bùa
-    if (alive) {
+    if (alive && !this.bench) {
       const near = (p) => d2(p[0], p[2], P.pos[0], P.pos[2]) <= T.pickup_radius && Math.abs(P.pos[1] - p[1]) <= W.pickup_dy;
       for (let i = 0; i < this.motes.length && P.carried < this.capacity;) {
         if (near(this.motes[i].pos)) { this.motes.splice(i, 1); P.carried++; emit('mote_picked', { carried: P.carried }); } else i++;
@@ -375,7 +378,7 @@ export class Sim {
       }
       const d = alive ? d2(s.pos[0], s.pos[2], px, pz) : Infinity;
       if (s.state === 'spawning') s.state = 'wander';
-      if (s.state === 'wander' && d <= W.shade_detect_m) { s.state = 'chase'; s.target = null; }
+      if (s.state === 'wander' && d <= W.shade_detect_m && !this.bench) { s.state = 'chase'; s.target = null; }
       else if (s.state === 'chase' && d > W.shade_lose_m) s.state = 'wander';
       if (s.state === 'chase') {
         const m = Math.min(speed * DT, d);
@@ -422,7 +425,7 @@ export class Sim {
     }
 
     // 9 chạm: Gió Lạc cướp trước, rồi Bóng Mực gây hit (id tăng dần)
-    if (alive) {
+    if (alive && !this.bench) {
       for (const dr of [...this.drifters].sort((a, b) => idNum(a.id) - idNum(b.id))) {
         if (dr.state === 'chase' && !dr.stole && P.carried > 0 && d2(dr.pos[0], dr.pos[2], px, pz) <= W.drifter_touch_m) {
           const amount = Math.min(W.drifter_steal, P.carried);
@@ -475,6 +478,7 @@ export class Sim {
       this.drifters.push({ id: `D${++this.driftN}`, pos: [p[0], W.drifter_y, p[2]], state: 'idle', stolen: 0, stole: false, fleeTicks: W.drifter_flee_ticks, wdx: 1, wdz: 0, wTimer: 0 });
     }
 
+    if (this.bench) return ev; // cảnh benchmark không có điều kiện kết thúc
     // 11 thắng / thua (Ticket-03): hết Ngọn Lửa luôn thua trước; thắng chỉ khi hết giờ + đủ đèn sáng
     if (P.flames <= 0) return this.finish(ev, k, 'lost', 'no_flames');
     if (this.leftTicks - n <= 0) {

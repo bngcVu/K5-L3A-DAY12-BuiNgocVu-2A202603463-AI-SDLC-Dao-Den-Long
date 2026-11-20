@@ -1,0 +1,14 @@
+{
+  "contract_version": "1.3",
+  "avg_fps": 282.1,
+  "p1_low_fps": 74.6,
+  "frame_ms_p95": 6.3,
+  "frames": 8463,
+  "load_ms": 1580,
+  "peak_mem_mb": null,
+  "peak_mem_note": "Bản web: Chrome chạy nhiều tiến trình nên không đo được RSS của một tiến trình game",
+  "vsync_off": true,
+  "vsync_note": "Chạy với --disable-gpu-vsync --disable-frame-rate-limit; cửa sổ thường. Nếu GPU/trình điều khiển ép vsync, avg_fps bị chặn ở tần số quét màn hình",
+  "renderer": "three r160 / WebGL ANGLE (Intel, Intel(R) UHD Graphics (0x000046A3) Direct3D11 vs_5_0 ps_5_0, D3D11); Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36",
+  "os": "Windows_NT 10.0.26200 x64 · win32 · 12th Gen Intel(R) Core(TM) i5-12450H ×12 · RAM 16 GB"
+}

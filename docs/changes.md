@@ -26,4 +26,8 @@
 | 2026-11-20 | `p2_full_night3_performance`: kết thúc ở tick 18000 (không phải 21600) | Đêm 3 = 300 s = 18.000 tick; vẫn chạy cấu hình 21.600 tick tối đa, kiểm `max_seconds: 30` |
 | 2026-11-20 | `tools/run_scenarios.py`: hiểu v1.2 (event `refuel`/`lantern_out`/`fuel_drain`, `lantern_lit.relight`, trường `fuel`/`ever_lit`/`relit_count`/`capacity`, trạng thái `drain`, lý do `dawn_survived`, bỏ `all_lit` từ 1.2) | Runner mẫu chỉ biết v1.0/v1.1 và sẽ báo sai mọi output v1.2. Không đổi cách kiểm `expect` hay tất định |
 | 2026-11-20 | Các `p1_*`, `p2_*`, `contract_*` còn lại giữ nguyên, vẫn đạt | Hồi quy Phase 1–2 |
+| 2026-11-20 | Phase 4 (Ticket-04): `game.contract.json` v1.3 (+ `bench_cmd`, `soak_cmd`), `run_cmd` → `node server.js` | Ticket-04 §6; `--export-leaderboard` cần truyền thẳng được (với `npm start` phải thêm `--`) |
+| 2026-11-20 | `src/sim/sim.js`: thêm tùy chọn `bench` | Cảnh benchmark phải tắt sinh thêm/sát thương/nhặt/hao dầu/kết thúc Đêm. Mặc định `false` → đầu ra headless không đổi (46 scenario vẫn đạt) |
+| 2026-11-20 | `tests/unit/sim.test.js`: `contract_version` kỳ vọng 1.2 → 1.3 | Phase 4 nâng contract |
+| 2026-11-20 | Không xóa/sửa scenario nào ở Phase 4 | Mọi yêu cầu v1.0–v1.2 giữ nguyên |
 
